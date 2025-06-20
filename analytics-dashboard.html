@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Dashboard</title>
+    <!-- Changed to Quicksand font as per requirements -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- CSS Custom Properties (Variables) for easy theming --- */
+        :root {
+            --charcoal: #1A202C;
+            --slate: #2D3748;
+            --electric-blue: #4299E1;
+            --emerald-green: #48BB78;
+            --light-gray: #A0AEC0;
+            --white: #FFFFFF;
+            --warning: #F6AD55;
+            --danger: #F56565;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-hover-color: rgba(0, 0, 0, 0.2);
+            --font-family: 'Quicksand', sans-serif; /* Updated font family */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: var(--light-gray);
+            min-height: 100vh;
+        }
+        
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal); }
+        ::-webkit-scrollbar-thumb { background: var(--slate); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--electric-blue); }
+
+        .container {
+            width: 95%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo { font-size: 24px; font-weight: 700; color: var(--white); }
+        .logo span { color: var(--electric-blue); }
+
+        .user-info { display: flex; align-items: center; gap: 20px; }
+        .notification-bell { position: relative; cursor: pointer; color: var(--light-gray); font-size: 1.3rem; }
+        .notification-badge {
+            position: absolute; top: -5px; right: -8px;
+            background-color: var(--danger); color: white;
+            border-radius: 50%; width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700;
+            border: 2px solid var(--charcoal);
+        }
+        .user-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-color: var(--slate); display: flex;
+            align-items: center; justify-content: center;
+            font-weight: 600; color: var(--white);
+            border: 2px solid var(--electric-blue);
+        }
+
+        /* --- Bento Grid Layout --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: minmax(150px, auto);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--slate);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px var(--shadow-hover-color);
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .card-title { font-size: 16px; font-weight: 600; color: var(--white); }
+        .card-value { font-size: 28px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; color: var(--white); } /* Added white color for better contrast */
+        .card-change { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .positive { color: var(--emerald-green); }
+        .negative { color: var(--danger); }
+        .card-footer { margin-top: auto; padding-top: 15px; }
+
+        .card-extra-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease-out, opacity 0.4s ease-out, margin-top 0.4s ease-out;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--light-gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-extra-content.visible { max-height: 200px; opacity: 1; margin-top: 15px; padding-top: 15px; }
+
+        .btn-learn-more {
+            background-color: transparent;
+            border: 1px solid var(--electric-blue);
+            color: var(--electric-blue);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-learn-more:hover { background-color: rgba(66, 153, 225, 0.1); }
+
+        /* Bento Grid item spanning rules */
+        .sales-overview { grid-column: span 6; grid-row: span 2; }
+        .revenue { grid-column: span 3; }
+        .orders { grid-column: span 3; }
+        .inventory-status { grid-column: span 4; grid-row: span 2; }
+        .customer-demographics { grid-column: span 8; }
+        .customer-reviews { grid-column: span 12; }
+
+        .chart-container { height: calc(100% - 40px); min-height: 200px; width: 100%; }
+        canvas { width: 100% !important; height: 100% !important; }
+        
+        .orders-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .orders-table th, .orders-table td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); } /* Added white color */
+        .orders-table th { font-weight: 600; }
+        .orders-table tbody tr:last-child td { border-bottom: none; }
+
+        .order-status { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; text-align: center; }
+        .status-completed { background-color: rgba(72, 187, 120, 0.2); color: var(--emerald-green); }
+        .status-pending { background-color: rgba(246, 173, 85, 0.2); color: var(--warning); }
+        .status-cancelled { background-color: rgba(245, 101, 101, 0.2); color: var(--danger); }
+
+        /* Custom dropdown styles */
+        .filters { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-group { position: relative; display: flex; align-items: center; gap: 10px; }
+        .filter-label { font-size: 14px; font-weight: 500; color: var(--white); }
+        .filter-select, .filter-input {
+            padding: 8px 12px; border-radius: 8px; border: 1px solid var(--slate);
+            background-color: var(--charcoal); color: var(--white); font-size: 14px;
+            appearance: none; /* Remove default styling */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+            padding-right: 30px;
+        }
+        .filter-select:focus, .filter-input:focus { outline: 1px solid var(--electric-blue); }
+        .btn-primary {
+            padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease;
+            background-color: var(--electric-blue); color: white;
+        }
+        .btn-primary:hover { background-color: #3182ce; }
+        
+        /* --- Notification Panel --- */
+        .notification-panel {
+            position: fixed; top: 0; right: -100%; width: 400px; height: 100vh;
+            background-color: var(--slate); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000; transition: right 0.4s ease-in-out; padding: 20px;
+            display: flex; flex-direction: column;
+        }
+        .notification-panel.active { right: 0; }
+        .notification-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .notification-title { font-size: 18px; font-weight: 600; color: var(--white); }
+        .close-notifications { background: none; border: none; color: var(--light-gray); font-size: 24px; cursor: pointer; }
+        .notification-list { flex-grow: 1; overflow-y: auto; }
+        .notification-item { padding: 15px; margin-bottom: 15px; background-color: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid var(--electric-blue); }
+        .notification-item.danger { border-left-color: var(--danger); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .overlay.active { opacity: 1; pointer-events: all; }
+
+        /* --- Responsive Design Media Queries --- */
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: repeat(8, 1fr); }
+            .sales-overview, .customer-demographics, .customer-reviews { grid-column: span 8; }
+            .revenue, .orders { grid-column: span 4; }
+            .inventory-status { grid-column: span 8; grid-row: span 1; }
+        }
+        @media (max-width: 992px) {
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .sales-overview, .customer-demographics, .inventory-status, .customer-reviews { grid-column: span 2; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .sales-overview, .revenue, .orders, .inventory-status, .customer-demographics, .customer-reviews { grid-column: span 1; }
+            .notification-panel { width: 100%; }
+            .filters { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Shop<span>Dashboard</span></div>
+            <div class="user-info">
+                <div class="notification-bell" id="notificationBell" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <div class="notification-badge" id="notificationBadge"></div>
+                </div>
+                <div class="user-avatar">AD</div>
+            </div>
+        </header>
+
+        <main>
+            <section class="filters">
+                <div class="filter-group"><label for="startDate" class="filter-label">From:</label><input type="date" class="filter-input" id="startDate"></div>
+                <div class="filter-group"><label for="endDate" class="filter-label">To:</label><input type="date" class="filter-input" id="endDate"></div>
+                <div class="filter-group"><label for="categoryFilter" class="filter-label">Category:</label>
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="all" selected>All</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+            </section>
+            <section class="dashboard-grid">
+                <article class="card sales-overview"><div class="card-header"><h3 class="card-title">Sales Overview</h3></div><div class="chart-container"><canvas id="salesChart"></canvas></div></article>
+                <article class="card revenue"><div class="card-header"><h3 class="card-title">Revenue</h3></div><div class="card-value">$24,580</div><div class="card-footer card-change positive"><i class="fas fa-arrow-up"></i> 8.2% vs last period</div></article>
+                <article class="card orders"><div class="card-header"><h3 class="card-title">Orders</h3></div><div class="card-value">184</div><div class="card-footer card-change positive"><i class="fas fa-arrow-up"></i> 5.7% vs last period</div></article>
+                <article class="card inventory-status"><div class="card-header"><h3 class="card-title">Inventory Levels</h3></div><div class="chart-container"><canvas id="inventoryChart"></canvas></div></article>
+                <article class="card customer-demographics"><div class="card-header"><h3 class="card-title">Customer Demographics</h3></div><div class="chart-container"><canvas id="customerChart"></canvas></div></article>
+                <article class="card customer-reviews"><div class="card-header"><h3 class="card-title">Recent Reviews</h3></div><div id="reviewsContainer"></div><div class="card-footer"><button class="btn-learn-more" aria-expanded="false">Learn More</button></div><div class="card-extra-content"><p>This section shows more detailed reviews and feedback, helping you understand the customer experience better.</p></div></article>
+            </section>
+        </main>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="notification-panel" id="notificationPanel"><div class="notification-header"><h3 class="notification-title">Notifications</h3><button class="close-notifications" id="closeNotifications">&times;</button></div><div id="notificationList" class="notification-list"></div></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Data structure with sample data for different categories
+            const mockData = {
+                all: {
+                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [1200, 1900, 1500, 2200, 1800, 2500, 2800] },
+                    inventory: { labels: ['Smartphone', 'Headphones', 'Notebook', 'Monitor'], data: [5, 3, 12, 25] },
+                    customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [30, 45, 15, 10] },
+                    reviews: [
+                        { author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.' },
+                        { author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.' },
+                    ],
+                    orders: [
+                        { id: '#1001', customer: 'Carlos M.', amount: '$1,299', status: 'Completed' }, 
+                        { id: '#1002', customer: 'Fernanda L.', amount: '$899', status: 'Completed' },
+                        { id: '#1003', customer: 'Ricardo S.', amount: '$2,499', status: 'Pending' }, 
+                        { id: '#1004', customer: 'Patricia A.', amount: '$459', status: 'Cancelled' }
+                    ],
+                    notifications: [
+                        { type: 'danger', message: 'Product "Headphones Pro" has only 3 units left in stock.' },
+                        { type: 'danger', message: 'Product "Smartphone X9" has only 5 units left in stock.' },
+                    ]
+                },
+                electronics: {
+                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [800, 1200, 900, 1500, 1100, 1800, 2000] },
+                    inventory: { labels: ['Smartphone', 'Headphones', 'Notebook'], data: [5, 3, 12] },
+                    customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [35, 50, 10, 5] },
+                    reviews: [
+                        { author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.' },
+                    ],
+                    orders: [
+                        { id: '#1001', customer: 'Carlos M.', amount: '$1,299', status: 'Completed' }, 
+                        { id: '#1003', customer: 'Ricardo S.', amount: '$2,499', status: 'Pending' }
+                    ]
+                },
+                clothing: {
+                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [400, 700, 600, 700, 700, 700, 800] },
+                    inventory: { labels: ['T-Shirts', 'Jeans', 'Jackets'], data: [45, 32, 18] },
+                    customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [25, 40, 20, 15] },
+                    reviews: [
+                        { author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.' },
+                    ],
+                    orders: [
+                        { id: '#1002', customer: 'Fernanda L.', amount: '$899', status: 'Completed' },
+                        { id: '#1004', customer: 'Patricia A.', amount: '$459', status: 'Cancelled' }
+                    ]
+                }
+            };
+
+            // Current filtered data
+            let currentData = mockData.all;
+
+            // Chart options with improved contrast
+            const chartOptions = (isDonut = false) => ({
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { 
+                        display: isDonut, 
+                        position: 'right', 
+                        labels: { 
+                            color: 'var(--white)', // Changed to white for better contrast
+                            font: {
+                                family: 'Quicksand',
+                                weight: '600'
+                            }
+                        } 
+                    } 
+                },
+                scales: isDonut ? {} : {
+                    y: { 
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
+                        ticks: { 
+                            color: 'var(--white)', // Changed to white for better contrast
+                            font: {
+                                family: 'Quicksand',
+                                weight: '600'
+                            }
+                        } 
+                    },
+                    x: { 
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
+                        ticks: { 
+                            color: 'var(--white)', // Changed to white for better contrast
+                            font: {
+                                family: 'Quicksand',
+                                weight: '600'
+                            }
+                        } 
+                    }
+                }
+            });
+
+            // Chart instances
+            let salesChart, inventoryChart, customerChart;
+
+            const renderSalesChart = () => {
+                const ctx = document.getElementById('salesChart')?.getContext('2d');
+                if (ctx) {
+                    if (salesChart) salesChart.destroy();
+                    salesChart = new Chart(ctx, { 
+                        type: 'line', 
+                        data: { 
+                            labels: currentData.sales.labels, 
+                            datasets: [{
+                                label: 'Sales ($)', 
+                                data: currentData.sales.data, 
+                                backgroundColor: 'rgba(66, 153, 225, 0.2)',
+                                borderColor: 'rgba(66, 153, 225, 1)', 
+                                borderWidth: 2, 
+                                tension: 0.4, 
+                                fill: true 
+                            }] 
+                        }, 
+                        options: chartOptions() 
+                    });
+                }
+            };
+            
+            const renderInventoryChart = () => {
+                const ctx = document.getElementById('inventoryChart')?.getContext('2d');
+                if (ctx) {
+                    if (inventoryChart) inventoryChart.destroy();
+                    inventoryChart = new Chart(ctx, { 
+                        type: 'bar', 
+                        data: { 
+                            labels: currentData.inventory.labels, 
+                            datasets: [{
+                                label: 'Stock Levels', 
+                                data: currentData.inventory.data, 
+                                backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                                borderColor: 'rgba(72, 187, 120, 1)', 
+                                borderWidth: 1 
+                            }] 
+                        }, 
+                        options: chartOptions() 
+                    });
+                }
+            };
+            
+            const renderCustomerChart = () => {
+                const ctx = document.getElementById('customerChart')?.getContext('2d');
+                if (ctx) {
+                    if (customerChart) customerChart.destroy();
+                    customerChart = new Chart(ctx, { 
+                        type: 'doughnut', 
+                        data: { 
+                            labels: currentData.customers.labels, 
+                            datasets: [{
+                                label: 'Age Group', 
+                                data: currentData.customers.data, 
+                                backgroundColor: ['#4299e1', '#48bb78', '#f6ad55', '#f56565'] 
+                            }]
+                        }, 
+                        options: chartOptions(true) 
+                    });
+                }
+            };
+
+            const populateReviews = () => {
+                const container = document.getElementById('reviewsContainer');
+                if(!container) return;
+                container.innerHTML = currentData.reviews.map(review => `
+                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span style="font-weight:600; color: var(--white)">${review.author}</span>
+                            <span style="color:var(--warning);">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                        </div>
+                        <p style="font-size:14px; opacity: 0.8; color: var(--light-gray)">"${review.text}"</p>
+                    </div>`).join('');
+                if(container.lastElementChild) container.lastElementChild.style.borderBottom = 'none';
+            };
+            
+            const populateOrders = () => {
+                const container = document.querySelector('.orders .card-value');
+                if (container) {
+                    container.textContent = currentData.orders.length;
+                }
+            };
+            
+            const populateNotifications = () => {
+                const badge = document.getElementById('notificationBadge');
+                const list = document.getElementById('notificationList');
+                const lowStockAlerts = mockData.all.notifications.filter(n => n.type === 'danger');
+                if(badge) badge.textContent = lowStockAlerts.length > 0 ? lowStockAlerts.length : '';
+                if(list) list.innerHTML = lowStockAlerts.map(item => `<div class="notification-item ${item.type}"><p>${item.message}</p></div>`).join('');
+            };
+
+            // Filter functionality
+            document.getElementById('applyFilters')?.addEventListener('click', () => {
+                const category = document.getElementById('categoryFilter').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                // In a real app, we would filter by date range too
+                currentData = mockData[category] || mockData.all;
+                
+                // Update all visualizations with filtered data
+                renderSalesChart();
+                renderInventoryChart();
+                renderCustomerChart();
+                populateReviews();
+                populateOrders();
+            });
+
+            // Learn more button functionality
+            document.querySelectorAll('.btn-learn-more').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetButton = e.target;
+                    const card = targetButton.closest('.card');
+                    if (!card) return;
+                    const extraContent = card.querySelector('.card-extra-content');
+                    if (!extraContent) return;
+                    const isVisible = extraContent.classList.toggle('visible');
+                    targetButton.setAttribute('aria-expanded', String(isVisible));
+                    targetButton.textContent = isVisible ? 'Show Less' : 'Learn More';
+                });
+            });
+
+            // Notification panel functionality
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationPanel = document.getElementById('notificationPanel');
+            const overlay = document.getElementById('overlay');
+            const closeNotifications = document.getElementById('closeNotifications');
+            const toggleNotifications = () => {
+                notificationPanel?.classList.toggle('active');
+                overlay?.classList.toggle('active');
+            }
+            notificationBell?.addEventListener('click', toggleNotifications);
+            closeNotifications?.addEventListener('click', toggleNotifications);
+            overlay?.addEventListener('click', toggleNotifications);
+            
+            // Initialize all visualizations
+            renderSalesChart();
+            renderInventoryChart();
+            renderCustomerChart();
+            populateReviews();
+            populateOrders();
+            populateNotifications();
+            
+            // Set default dates
+            const today = new Date();
+            const lastWeek = new Date();
+            lastWeek.setDate(today.getDate() - 7);
+            
+            document.getElementById('startDate').valueAsDate = lastWeek;
+            document.getElementById('endDate').valueAsDate = today;
+        });
+    </script>
+</body>
+</html>
