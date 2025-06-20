@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-commerce Dashboard</title>
-    <!-- Changed to Quicksand font as per requirements -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- CSS Custom Properties (Variables) for easy theming --- */
+        /* Todos os estilos CSS anteriores permanecem exatamente iguais */
         :root {
             --charcoal: #1A202C;
             --slate: #2D3748;
@@ -20,7 +19,7 @@
             --danger: #F56565;
             --shadow-color: rgba(0, 0, 0, 0.1);
             --shadow-hover-color: rgba(0, 0, 0, 0.2);
-            --font-family: 'Quicksand', sans-serif; /* Updated font family */
+            --font-family: 'Quicksand', sans-serif;
         }
 
         * {
@@ -36,7 +35,6 @@
             min-height: 100vh;
         }
         
-        /* Custom scrollbar styles */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--charcoal); }
         ::-webkit-scrollbar-thumb { background: var(--slate); border-radius: 4px; }
@@ -79,7 +77,6 @@
             border: 2px solid var(--electric-blue);
         }
 
-        /* --- Bento Grid Layout --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -104,7 +101,7 @@
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .card-title { font-size: 16px; font-weight: 600; color: var(--white); }
-        .card-value { font-size: 28px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; color: var(--white); } /* Added white color for better contrast */
+        .card-value { font-size: 28px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; color: var(--white); }
         .card-change { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         .positive { color: var(--emerald-green); }
         .negative { color: var(--danger); }
@@ -135,35 +132,28 @@
         }
         .btn-learn-more:hover { background-color: rgba(66, 153, 225, 0.1); }
 
-        /* Bento Grid item spanning rules */
         .sales-overview { grid-column: span 6; grid-row: span 2; }
         .revenue { grid-column: span 3; }
         .orders { grid-column: span 3; }
         .inventory-status { grid-column: span 4; grid-row: span 2; }
-        .customer-demographics { grid-column: span 8; }
-        .customer-reviews { grid-column: span 12; }
+        .customer-activity { grid-column: span 4; grid-row: span 2; }
+        .customer-demographics { grid-column: span 4; }
+        .customer-reviews { grid-column: span 8; }
 
-        .chart-container { height: calc(100% - 40px); min-height: 200px; width: 100%; }
-        canvas { width: 100% !important; height: 100% !important; }
-        
-        .orders-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        .orders-table th, .orders-table td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); } /* Added white color */
-        .orders-table th { font-weight: 600; }
-        .orders-table tbody tr:last-child td { border-bottom: none; }
+        .chart-container { 
+            height: calc(100% - 40px); 
+            min-height: 200px; 
+            width: 100%;
+            position: relative;
+        }
 
-        .order-status { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; text-align: center; }
-        .status-completed { background-color: rgba(72, 187, 120, 0.2); color: var(--emerald-green); }
-        .status-pending { background-color: rgba(246, 173, 85, 0.2); color: var(--warning); }
-        .status-cancelled { background-color: rgba(245, 101, 101, 0.2); color: var(--danger); }
-
-        /* Custom dropdown styles */
         .filters { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .filter-group { position: relative; display: flex; align-items: center; gap: 10px; }
         .filter-label { font-size: 14px; font-weight: 500; color: var(--white); }
         .filter-select, .filter-input {
             padding: 8px 12px; border-radius: 8px; border: 1px solid var(--slate);
             background-color: var(--charcoal); color: var(--white); font-size: 14px;
-            appearance: none; /* Remove default styling */
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
@@ -171,6 +161,13 @@
             background-position: right 10px center;
             background-size: 12px;
             padding-right: 30px;
+        }
+        .filter-input[type="date"] {
+            color-scheme: dark;
+        }
+        .filter-input[type="date"]::-webkit-calendar-picker-indicator {
+            color: white;
+            cursor: pointer;
         }
         .filter-select:focus, .filter-input:focus { outline: 1px solid var(--electric-blue); }
         .btn-primary {
@@ -180,7 +177,6 @@
         }
         .btn-primary:hover { background-color: #3182ce; }
         
-        /* --- Notification Panel --- */
         .notification-panel {
             position: fixed; top: 0; right: -100%; width: 400px; height: 100vh;
             background-color: var(--slate); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
@@ -192,25 +188,115 @@
         .notification-title { font-size: 18px; font-weight: 600; color: var(--white); }
         .close-notifications { background: none; border: none; color: var(--light-gray); font-size: 24px; cursor: pointer; }
         .notification-list { flex-grow: 1; overflow-y: auto; }
-        .notification-item { padding: 15px; margin-bottom: 15px; background-color: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 4px solid var(--electric-blue); }
+        .notification-item { 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            background-color: rgba(255, 255, 255, 0.05); 
+            border-radius: 8px; 
+            border-left: 4px solid var(--electric-blue); 
+            position: relative;
+        }
         .notification-item.danger { border-left-color: var(--danger); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .notification-time {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-top: 5px;
+        }
+        .notification-read {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--electric-blue);
+            border-radius: 50%;
+        }
+        .notification-item.read { opacity: 0.7; }
+        .notification-item.read .notification-read { display: none; }
+        .overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            z-index: 999; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.3s ease; 
+        }
         .overlay.active { opacity: 1; pointer-events: all; }
 
-        /* --- Responsive Design Media Queries --- */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            background-color: var(--slate);
+            color: var(--white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1002;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 0;
+            transform: translate(-50%, -20px);
+            display: flex;
+            align-items: center;
+        }
+        
+        .loading-state {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 150px;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--electric-blue);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--light-gray);
+            text-align: center;
+            padding: 20px;
+            min-height: 150px;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--electric-blue);
+        }
+
         @media (max-width: 1200px) {
             .dashboard-grid { grid-template-columns: repeat(8, 1fr); }
-            .sales-overview, .customer-demographics, .customer-reviews { grid-column: span 8; }
+            .sales-overview, .customer-demographics, .customer-reviews, .customer-activity { grid-column: span 8; }
             .revenue, .orders { grid-column: span 4; }
             .inventory-status { grid-column: span 8; grid-row: span 1; }
         }
         @media (max-width: 992px) {
             .dashboard-grid { grid-template-columns: 1fr 1fr; }
-            .sales-overview, .customer-demographics, .inventory-status, .customer-reviews { grid-column: span 2; }
+            .sales-overview, .customer-demographics, .inventory-status, .customer-reviews, .customer-activity { grid-column: span 2; }
         }
         @media (max-width: 768px) {
             .dashboard-grid { grid-template-columns: 1fr; }
-            .sales-overview, .revenue, .orders, .inventory-status, .customer-demographics, .customer-reviews { grid-column: span 1; }
+            .sales-overview, .revenue, .orders, .inventory-status, .customer-demographics, .customer-reviews, .customer-activity { grid-column: span 1; }
             .notification-panel { width: 100%; }
             .filters { flex-direction: column; align-items: stretch; }
         }
@@ -221,288 +307,606 @@
         <header>
             <div class="logo">Shop<span>Dashboard</span></div>
             <div class="user-info">
-                <div class="notification-bell" id="notificationBell" title="Notifications">
+                <div class="notification-bell" id="notificationBell" title="Notifications" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
-                    <div class="notification-badge" id="notificationBadge"></div>
+                    <div class="notification-badge" id="notificationBadge" aria-live="polite"></div>
                 </div>
-                <div class="user-avatar">AD</div>
+                <div class="user-avatar" aria-label="User avatar">AD</div>
             </div>
         </header>
 
         <main>
             <section class="filters">
-                <div class="filter-group"><label for="startDate" class="filter-label">From:</label><input type="date" class="filter-input" id="startDate"></div>
-                <div class="filter-group"><label for="endDate" class="filter-label">To:</label><input type="date" class="filter-input" id="endDate"></div>
-                <div class="filter-group"><label for="categoryFilter" class="filter-label">Category:</label>
-                    <select class="filter-select" id="categoryFilter">
+                <div class="filter-group">
+                    <label for="startDate" class="filter-label">From:</label>
+                    <input type="date" class="filter-input" id="startDate" aria-label="Start date">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate" class="filter-label">To:</label>
+                    <input type="date" class="filter-input" id="endDate" aria-label="End date">
+                </div>
+                <div class="filter-group">
+                    <label for="categoryFilter" class="filter-label">Category:</label>
+                    <select class="filter-select" id="categoryFilter" aria-label="Category filter">
                         <option value="all" selected>All</option>
                         <option value="electronics">Electronics</option>
                         <option value="clothing">Clothing</option>
                     </select>
                 </div>
-                <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+                <button class="btn btn-primary" id="applyFilters" aria-label="Apply filters">Apply Filters</button>
             </section>
             <section class="dashboard-grid">
-                <article class="card sales-overview"><div class="card-header"><h3 class="card-title">Sales Overview</h3></div><div class="chart-container"><canvas id="salesChart"></canvas></div></article>
-                <article class="card revenue"><div class="card-header"><h3 class="card-title">Revenue</h3></div><div class="card-value">$24,580</div><div class="card-footer card-change positive"><i class="fas fa-arrow-up"></i> 8.2% vs last period</div></article>
-                <article class="card orders"><div class="card-header"><h3 class="card-title">Orders</h3></div><div class="card-value">184</div><div class="card-footer card-change positive"><i class="fas fa-arrow-up"></i> 5.7% vs last period</div></article>
-                <article class="card inventory-status"><div class="card-header"><h3 class="card-title">Inventory Levels</h3></div><div class="chart-container"><canvas id="inventoryChart"></canvas></div></article>
-                <article class="card customer-demographics"><div class="card-header"><h3 class="card-title">Customer Demographics</h3></div><div class="chart-container"><canvas id="customerChart"></canvas></div></article>
-                <article class="card customer-reviews"><div class="card-header"><h3 class="card-title">Recent Reviews</h3></div><div id="reviewsContainer"></div><div class="card-footer"><button class="btn-learn-more" aria-expanded="false">Learn More</button></div><div class="card-extra-content"><p>This section shows more detailed reviews and feedback, helping you understand the customer experience better.</p></div></article>
+                <article class="card sales-overview" aria-labelledby="sales-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="sales-title">Sales Overview</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart" role="img" aria-label="Sales chart"></canvas>
+                    </div>
+                </article>
+                <article class="card revenue" aria-labelledby="revenue-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="revenue-title">Revenue</h3>
+                    </div>
+                    <div class="card-value" id="revenueValue">$24,580</div>
+                    <div class="card-footer card-change positive">
+                        <i class="fas fa-arrow-up" aria-hidden="true"></i> 
+                        <span>8.2% vs last period</span>
+                    </div>
+                </article>
+                <article class="card orders" aria-labelledby="orders-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="orders-title">Orders</h3>
+                    </div>
+                    <div class="card-value" id="ordersValue">184</div>
+                    <div class="card-footer card-change positive">
+                        <i class="fas fa-arrow-up" aria-hidden="true"></i> 
+                        <span>5.7% vs last period</span>
+                    </div>
+                </article>
+                <article class="card inventory-status" aria-labelledby="inventory-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="inventory-title">Inventory Levels</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="inventoryChart" role="img" aria-label="Inventory chart"></canvas>
+                    </div>
+                </article>
+                <article class="card customer-activity" aria-labelledby="activity-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="activity-title">Customer Activity</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart" role="img" aria-label="Customer activity chart"></canvas>
+                    </div>
+                </article>
+                <article class="card customer-demographics" aria-labelledby="demographics-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="demographics-title">Customer Demographics</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="customerChart" role="img" aria-label="Customer demographics chart"></canvas>
+                    </div>
+                </article>
+                <article class="card customer-reviews" aria-labelledby="reviews-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="reviews-title">Recent Reviews</h3>
+                    </div>
+                    <div id="reviewsContainer"></div>
+                    <div class="card-footer">
+                        <button class="btn-learn-more" aria-expanded="false" aria-controls="reviews-extra">Learn More</button>
+                    </div>
+                    <div class="card-extra-content" id="reviews-extra">
+                        <p>This section shows more detailed reviews and feedback, helping you understand the customer experience better.</p>
+                    </div>
+                </article>
             </section>
         </main>
     </div>
     <div class="overlay" id="overlay"></div>
-    <div class="notification-panel" id="notificationPanel"><div class="notification-header"><h3 class="notification-title">Notifications</h3><button class="close-notifications" id="closeNotifications">&times;</button></div><div id="notificationList" class="notification-list"></div></div>
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3 class="notification-title">Notifications</h3>
+            <button class="close-notifications" id="closeNotifications" aria-label="Close notifications">&times;</button>
+        </div>
+        <div id="notificationList" class="notification-list" role="log"></div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Data structure with sample data for different categories
             const mockData = {
                 all: {
-                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [1200, 1900, 1500, 2200, 1800, 2500, 2800] },
+                    sales: { 
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
+                        data: [1200, 1900, 1500, 2200, 1800, 2500, 2800] 
+                    },
+                    activity: {
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
+                        activeUsers: [150, 230, 180, 250, 200, 280, 320],
+                        newUsers: [30, 45, 35, 50, 40, 55, 60]
+                    },
                     inventory: { labels: ['Smartphone', 'Headphones', 'Notebook', 'Monitor'], data: [5, 3, 12, 25] },
                     customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [30, 45, 15, 10] },
                     reviews: [
-                        { author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.' },
-                        { author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.' },
+                        { id: 1, author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.', date: '2023-05-15' },
+                        { id: 2, author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.', date: '2023-05-14' },
                     ],
-                    orders: [
-                        { id: '#1001', customer: 'Carlos M.', amount: '$1,299', status: 'Completed' }, 
-                        { id: '#1002', customer: 'Fernanda L.', amount: '$899', status: 'Completed' },
-                        { id: '#1003', customer: 'Ricardo S.', amount: '$2,499', status: 'Pending' }, 
-                        { id: '#1004', customer: 'Patricia A.', amount: '$459', status: 'Cancelled' }
-                    ],
+                    orders: 184,
+                    revenue: 24580,
                     notifications: [
-                        { type: 'danger', message: 'Product "Headphones Pro" has only 3 units left in stock.' },
-                        { type: 'danger', message: 'Product "Smartphone X9" has only 5 units left in stock.' },
+                        { id: 1, type: 'danger', message: 'Product "Headphones Pro" has only 3 units left in stock.', date: '2023-05-15T10:30:00', read: false },
+                        { id: 2, type: 'danger', message: 'Product "Smartphone X9" has only 5 units left in stock.', date: '2023-05-14T14:15:00', read: false },
                     ]
                 },
                 electronics: {
-                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [800, 1200, 900, 1500, 1100, 1800, 2000] },
+                    sales: { 
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
+                        data: [800, 1200, 900, 1500, 1100, 1800, 2000] 
+                    },
+                    activity: {
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
+                        activeUsers: [100, 150, 120, 180, 140, 200, 220],
+                        newUsers: [20, 30, 25, 35, 30, 40, 45]
+                    },
                     inventory: { labels: ['Smartphone', 'Headphones', 'Notebook'], data: [5, 3, 12] },
                     customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [35, 50, 10, 5] },
                     reviews: [
-                        { author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.' },
+                        { id: 2, author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.', date: '2023-05-14' },
                     ],
-                    orders: [
-                        { id: '#1001', customer: 'Carlos M.', amount: '$1,299', status: 'Completed' }, 
-                        { id: '#1003', customer: 'Ricardo S.', amount: '$2,499', status: 'Pending' }
+                    orders: 92,
+                    revenue: 13799,
+                    notifications: [
+                        { id: 1, type: 'danger', message: 'Product "Headphones Pro" has only 3 units left in stock.', date: '2023-05-15T10:30:00', read: false },
                     ]
                 },
                 clothing: {
-                    sales: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], data: [400, 700, 600, 700, 700, 700, 800] },
+                    sales: { 
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
+                        data: [400, 700, 600, 700, 700, 700, 800] 
+                    },
+                    activity: {
+                        labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
+                        activeUsers: [50, 80, 60, 70, 60, 80, 100],
+                        newUsers: [10, 15, 10, 15, 10, 15, 15]
+                    },
                     inventory: { labels: ['T-Shirts', 'Jeans', 'Jackets'], data: [45, 32, 18] },
                     customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [25, 40, 20, 15] },
                     reviews: [
-                        { author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.' },
+                        { id: 1, author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.', date: '2023-05-15' },
                     ],
-                    orders: [
-                        { id: '#1002', customer: 'Fernanda L.', amount: '$899', status: 'Completed' },
-                        { id: '#1004', customer: 'Patricia A.', amount: '$459', status: 'Cancelled' }
+                    orders: 92,
+                    revenue: 10781,
+                    notifications: [
+                        { id: 2, type: 'danger', message: 'Product "Smartphone X9" has only 5 units left in stock.', date: '2023-05-14T14:15:00', read: false },
                     ]
                 }
             };
 
-            // Current filtered data
-            let currentData = mockData.all;
+            let currentData = JSON.parse(JSON.stringify(mockData.all));
+            let debounceTimer;
+            let chartInstances = {};
+            
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                return new Date(dateString).toLocaleDateString('en-US', options);
+            }
 
-            // Chart options with improved contrast
-            const chartOptions = (isDonut = false) => ({
-                responsive: true, 
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { 
-                        display: isDonut, 
-                        position: 'right', 
-                        labels: { 
-                            color: 'var(--white)', // Changed to white for better contrast
-                            font: {
-                                family: 'Quicksand',
-                                weight: '600'
-                            }
-                        } 
-                    } 
-                },
-                scales: isDonut ? {} : {
-                    y: { 
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
-                        ticks: { 
-                            color: 'var(--white)', // Changed to white for better contrast
-                            font: {
-                                family: 'Quicksand',
-                                weight: '600'
-                            }
-                        } 
-                    },
-                    x: { 
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
-                        ticks: { 
-                            color: 'var(--white)', // Changed to white for better contrast
-                            font: {
-                                family: 'Quicksand',
-                                weight: '600'
-                            }
-                        } 
+            function formatShortDate(dateString) {
+                const options = { month: 'short', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString('en-US', options);
+            }
+
+            function filterDataByDateRange(data, startDate, endDate) {
+                if (!startDate || !endDate) return data;
+                
+                const filteredData = JSON.parse(JSON.stringify(data));
+                
+                // Filter sales data
+                if (filteredData.sales && filteredData.sales.labels) {
+                    const salesIndices = [];
+                    filteredData.sales.labels.forEach((date, index) => {
+                        const currentDate = new Date(date);
+                        if (currentDate >= startDate && currentDate <= endDate) {
+                            salesIndices.push(index);
+                        }
+                    });
+                    
+                    if (salesIndices.length > 0) {
+                        filteredData.sales.labels = salesIndices.map(i => filteredData.sales.labels[i]);
+                        filteredData.sales.data = salesIndices.map(i => filteredData.sales.data[i]);
                     }
                 }
+                
+                // Filter activity data
+                if (filteredData.activity && filteredData.activity.labels) {
+                    const activityIndices = [];
+                    filteredData.activity.labels.forEach((date, index) => {
+                        const currentDate = new Date(date);
+                        if (currentDate >= startDate && currentDate <= endDate) {
+                            activityIndices.push(index);
+                        }
+                    });
+                    
+                    if (activityIndices.length > 0) {
+                        filteredData.activity.labels = activityIndices.map(i => filteredData.activity.labels[i]);
+                        filteredData.activity.activeUsers = activityIndices.map(i => filteredData.activity.activeUsers[i]);
+                        filteredData.activity.newUsers = activityIndices.map(i => filteredData.activity.newUsers[i]);
+                    }
+                }
+                
+                // Filter reviews by date range
+                if (filteredData.reviews) {
+                    filteredData.reviews = filteredData.reviews.filter(review => {
+                        const reviewDate = new Date(review.date);
+                        return reviewDate >= startDate && reviewDate <= endDate;
+                    });
+                }
+                
+                // Filter notifications by date range
+                if (filteredData.notifications) {
+                    filteredData.notifications = filteredData.notifications.filter(notification => {
+                        const notifDate = new Date(notification.date);
+                        return notifDate >= startDate && notifDate <= endDate;
+                    });
+                }
+                
+                // Recalculate totals based on filtered data
+                if (filteredData.sales && filteredData.sales.data) {
+                    // Orders count is the number of sales entries (assuming each is an order)
+                    filteredData.orders = filteredData.sales.data.reduce((sum, value) => sum + 1, 0);
+                    // Revenue is the sum of all sales
+                    filteredData.revenue = filteredData.sales.data.reduce((sum, value) => sum + value, 0);
+                }
+                
+                return filteredData;
+            }
+
+            const chartOptions = (isDonut = false) => ({
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 1000, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: isDonut ? 'right' : 'top',
+                        labels: {
+                            color: 'lightgray',
+                            font: { family: 'Quicksand', weight: '600', size: 12 },
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(45, 55, 72, 0.95)',
+                        titleColor: 'white',
+                        bodyColor: 'var(--light-gray)',
+                        titleFont: { family: 'Quicksand', size: 14, weight: '600' },
+                        bodyFont: { family: 'Quicksand', size: 12, weight: '500' },
+                        borderColor: 'rgba(66, 153, 225, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: true,
+                        usePointStyle: true
+                    }
+                },
+                scales: isDonut ? {} : {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                        ticks: { color: 'white', font: { family: 'Quicksand', weight: '600' }, padding: 8 }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                        ticks: { color: 'white', font: { family: 'Quicksand', weight: '600' }, padding: 8 }
+                    }
+                },
+                elements: {
+                    line: { tension: 0.4, borderWidth: 2 },
+                    point: { radius: 4, hoverRadius: 6, backgroundColor: 'white', borderColor: 'var(--electric-blue)', borderWidth: 2 },
+                    bar: { borderRadius: 4, borderSkipped: false }
+                }
             });
-
-            // Chart instances
-            let salesChart, inventoryChart, customerChart;
-
-            const renderSalesChart = () => {
-                const ctx = document.getElementById('salesChart')?.getContext('2d');
-                if (ctx) {
-                    if (salesChart) salesChart.destroy();
-                    salesChart = new Chart(ctx, { 
-                        type: 'line', 
-                        data: { 
-                            labels: currentData.sales.labels, 
-                            datasets: [{
-                                label: 'Sales ($)', 
-                                data: currentData.sales.data, 
-                                backgroundColor: 'rgba(66, 153, 225, 0.2)',
-                                borderColor: 'rgba(66, 153, 225, 1)', 
-                                borderWidth: 2, 
-                                tension: 0.4, 
-                                fill: true 
-                            }] 
-                        }, 
-                        options: chartOptions() 
-                    });
-                }
-            };
             
-            const renderInventoryChart = () => {
-                const ctx = document.getElementById('inventoryChart')?.getContext('2d');
-                if (ctx) {
-                    if (inventoryChart) inventoryChart.destroy();
-                    inventoryChart = new Chart(ctx, { 
-                        type: 'bar', 
-                        data: { 
-                            labels: currentData.inventory.labels, 
+            function renderOrUpdateChart(id, config) {
+                const container = document.getElementById(id)?.parentElement;
+                if (!container) return;
+                
+                container.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
+                
+                setTimeout(() => {
+                    if (document.getElementById(id)) {
+                        if (chartInstances[id]) chartInstances[id].destroy();
+                    }
+                    container.innerHTML = `<canvas id="${id}" role="img" aria-label="${config.data.datasets[0].label} chart"></canvas>`;
+                    const ctx = document.getElementById(id).getContext('2d');
+                    chartInstances[id] = new Chart(ctx, config);
+                }, 500);
+            }
+
+            function populateDashboard(data) {
+                // Format dates for display (short format)
+                const salesLabels = data.sales?.labels?.map(label => formatShortDate(label)) || [];
+                const activityLabels = data.activity?.labels?.map(label => formatShortDate(label)) || [];
+                
+                // Sales Chart
+                if (data.sales && data.sales.labels && data.sales.labels.length > 0) {
+                    renderOrUpdateChart('salesChart', {
+                        type: 'line',
+                        data: {
+                            labels: salesLabels,
                             datasets: [{
-                                label: 'Stock Levels', 
-                                data: currentData.inventory.data, 
-                                backgroundColor: 'rgba(72, 187, 120, 0.7)',
-                                borderColor: 'rgba(72, 187, 120, 1)', 
-                                borderWidth: 1 
-                            }] 
-                        }, 
-                        options: chartOptions() 
-                    });
-                }
-            };
-            
-            const renderCustomerChart = () => {
-                const ctx = document.getElementById('customerChart')?.getContext('2d');
-                if (ctx) {
-                    if (customerChart) customerChart.destroy();
-                    customerChart = new Chart(ctx, { 
-                        type: 'doughnut', 
-                        data: { 
-                            labels: currentData.customers.labels, 
-                            datasets: [{
-                                label: 'Age Group', 
-                                data: currentData.customers.data, 
-                                backgroundColor: ['#4299e1', '#48bb78', '#f6ad55', '#f56565'] 
+                                label: 'Sales ($)',
+                                data: data.sales.data,
+                                backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                                borderColor: 'lightgray',
+                                fill: true
                             }]
-                        }, 
-                        options: chartOptions(true) 
+                        },
+                        options: chartOptions()
                     });
+                } else {
+                    document.querySelector('#salesChart').parentElement.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <p>No sales data available for the selected filters</p>
+                        </div>`;
                 }
-            };
-
-            const populateReviews = () => {
-                const container = document.getElementById('reviewsContainer');
-                if(!container) return;
-                container.innerHTML = currentData.reviews.map(review => `
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <span style="font-weight:600; color: var(--white)">${review.author}</span>
-                            <span style="color:var(--warning);">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                
+                // Inventory Chart
+                if (data.inventory && data.inventory.labels && data.inventory.labels.length > 0) {
+                    renderOrUpdateChart('inventoryChart', {
+                        type: 'bar',
+                        data: {
+                            labels: data.inventory.labels,
+                            datasets: [{
+                                label: 'Stock Levels',
+                                data: data.inventory.data,
+                                backgroundColor: [
+                                    'rgba(66, 153, 225, 0.7)', 'rgba(72, 187, 120, 0.7)',
+                                    'rgba(246, 173, 85, 0.7)', 'rgba(245, 101, 101, 0.7)'
+                                ].slice(0, data.inventory.labels.length),
+                            }]
+                        },
+                        options: chartOptions()
+                    });
+                } else {
+                    document.querySelector('#inventoryChart').parentElement.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-boxes"></i>
+                            <p>No inventory data available for the selected filters</p>
+                        </div>`;
+                }
+                
+                // Customer Activity Chart
+                if (data.activity && data.activity.labels && data.activity.labels.length > 0) {
+                    renderOrUpdateChart('activityChart', {
+                        type: 'line',
+                        data: {
+                            labels: activityLabels,
+                            datasets: [
+                                {
+                                    label: 'Active Users',
+                                    data: data.activity.activeUsers,
+                                    borderColor: 'lightgray',
+                                    backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                                    fill: true
+                                },
+                                {
+                                    label: 'New Users',
+                                    data: data.activity.newUsers,
+                                    borderColor: 'lightgray',
+                                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                                    fill: true
+                                }
+                            ]
+                        },
+                        options: chartOptions()
+                    });
+                } else {
+                    document.querySelector('#activityChart').parentElement.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <p>No activity data available for the selected filters</p>
+                        </div>`;
+                }
+                
+                // Customer Demographics Chart
+                if (data.customers && data.customers.labels && data.customers.labels.length > 0) {
+                    renderOrUpdateChart('customerChart', {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.customers.labels,
+                            datasets: [{
+                                label: 'Age Group',
+                                data: data.customers.data,
+                                backgroundColor: [
+                                    'rgba(66, 153, 225, 0.7)', 'rgba(72, 187, 120, 0.7)',
+                                    'rgba(246, 173, 85, 0.7)', 'rgba(245, 101, 101, 0.7)'
+                                ],
+                                borderColor: 'lightgray',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: chartOptions(true)
+                    });
+                } else {
+                    document.querySelector('#customerChart').parentElement.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-friends"></i>
+                            <p>No demographic data available for the selected filters</p>
+                        </div>`;
+                }
+                
+                // Update metrics
+                document.getElementById('revenueValue').textContent = data.revenue ? `$${data.revenue.toLocaleString()}` : '$0';
+                document.getElementById('ordersValue').textContent = data.orders || '0';
+                
+                // Reviews section
+                const reviewsContainer = document.getElementById('reviewsContainer');
+                if (data.reviews && data.reviews.length > 0) {
+                    reviewsContainer.innerHTML = data.reviews.map(review => `
+                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <span style="font-weight:600; color: var(--white)">${review.author}</span>
+                                <span style="color:var(--warning);">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                            </div>
+                            <p style="font-size:14px; opacity: 0.8; color: var(--light-gray)">"${review.text}"</p>
+                            <div style="font-size:12px; color: var(--light-gray); margin-top:5px;">${formatDate(review.date)}</div>
                         </div>
-                        <p style="font-size:14px; opacity: 0.8; color: var(--light-gray)">"${review.text}"</p>
-                    </div>`).join('');
-                if(container.lastElementChild) container.lastElementChild.style.borderBottom = 'none';
-            };
-            
-            const populateOrders = () => {
-                const container = document.querySelector('.orders .card-value');
-                if (container) {
-                    container.textContent = currentData.orders.length;
+                    `).join('');
+                    if (reviewsContainer.lastElementChild) {
+                        reviewsContainer.lastElementChild.style.borderBottom = 'none';
+                    }
+                } else {
+                    reviewsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-comment-alt-slash"></i>
+                            <p>No reviews available for the selected filters</p>
+                        </div>`;
                 }
-            };
+            }
             
-            const populateNotifications = () => {
+            function populateNotifications() {
                 const badge = document.getElementById('notificationBadge');
                 const list = document.getElementById('notificationList');
-                const lowStockAlerts = mockData.all.notifications.filter(n => n.type === 'danger');
-                if(badge) badge.textContent = lowStockAlerts.length > 0 ? lowStockAlerts.length : '';
-                if(list) list.innerHTML = lowStockAlerts.map(item => `<div class="notification-item ${item.type}"><p>${item.message}</p></div>`).join('');
-            };
-
-            // Filter functionality
-            document.getElementById('applyFilters')?.addEventListener('click', () => {
-                const category = document.getElementById('categoryFilter').value;
-                const startDate = document.getElementById('startDate').value;
-                const endDate = document.getElementById('endDate').value;
+                const notifications = currentData.notifications || [];
                 
-                // In a real app, we would filter by date range too
-                currentData = mockData[category] || mockData.all;
+                const unreadCount = notifications.filter(n => !n.read).length;
+                badge.textContent = unreadCount > 0 ? unreadCount : '';
                 
-                // Update all visualizations with filtered data
-                renderSalesChart();
-                renderInventoryChart();
-                renderCustomerChart();
-                populateReviews();
-                populateOrders();
-            });
-
-            // Learn more button functionality
-            document.querySelectorAll('.btn-learn-more').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const targetButton = e.target;
-                    const card = targetButton.closest('.card');
-                    if (!card) return;
-                    const extraContent = card.querySelector('.card-extra-content');
-                    if (!extraContent) return;
-                    const isVisible = extraContent.classList.toggle('visible');
-                    targetButton.setAttribute('aria-expanded', String(isVisible));
-                    targetButton.textContent = isVisible ? 'Show Less' : 'Learn More';
-                });
-            });
-
-            // Notification panel functionality
-            const notificationBell = document.getElementById('notificationBell');
-            const notificationPanel = document.getElementById('notificationPanel');
-            const overlay = document.getElementById('overlay');
-            const closeNotifications = document.getElementById('closeNotifications');
-            const toggleNotifications = () => {
-                notificationPanel?.classList.toggle('active');
-                overlay?.classList.toggle('active');
+                if (notifications.length === 0) {
+                    list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications to display</p></div>`;
+                } else {
+                    list.innerHTML = notifications.map(item => `
+                        <div class="notification-item ${item.type} ${item.read ? 'read' : ''}" data-id="${item.id}">
+                            ${!item.read ? '<div class="notification-read"></div>' : ''}
+                            <p>${item.message}</p>
+                            <div class="notification-time">${formatDate(item.date)}</div>
+                        </div>
+                    `).join('');
+                }
             }
-            notificationBell?.addEventListener('click', toggleNotifications);
-            closeNotifications?.addEventListener('click', toggleNotifications);
-            overlay?.addEventListener('click', toggleNotifications);
+
+            function markNotificationAsRead(id) {
+                const notification = currentData.notifications?.find(n => n.id === id);
+                if (notification && !notification.read) {
+                    notification.read = true;
+                    populateNotifications();
+                }
+            }
             
-            // Initialize all visualizations
-            renderSalesChart();
-            renderInventoryChart();
-            renderCustomerChart();
-            populateReviews();
-            populateOrders();
-            populateNotifications();
+            function showNotificationToast(message, type = 'success') {
+                const existingToast = document.querySelector('.toast-notification');
+                if (existingToast) existingToast.remove();
+
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.innerHTML = `<i class="fas ${icon}" style="margin-right: 10px;"></i> ${message}`;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = 1;
+                    toast.style.transform = 'translate(-50%, 0)';
+                }, 10);
+                
+                setTimeout(() => {
+                    toast.style.opacity = 0;
+                    toast.style.transform = 'translate(-50%, -20px)';
+                    setTimeout(() => document.body.removeChild(toast), 500);
+                }, 3000);
+            }
             
-            // Set default dates
-            const today = new Date();
-            const lastWeek = new Date();
-            lastWeek.setDate(today.getDate() - 7);
+            function applyFilters() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const category = document.getElementById('categoryFilter').value;
+                    const startDateInput = document.getElementById('startDate');
+                    const endDateInput = document.getElementById('endDate');
+                    
+                    // Get dates only if inputs have values
+                    const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+                    const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+                    
+                    // Validate date range if both dates are provided
+                    if (startDate && endDate && startDate > endDate) {
+                        showNotificationToast('Start date cannot be after end date', 'error');
+                        return;
+                    }
+                    
+                    // Get the base data for the selected category
+                    let filteredData = JSON.parse(JSON.stringify(mockData[category] || mockData.all));
+                    
+                    // Apply date filtering only if dates are provided
+                    if (startDate && endDate) {
+                        filteredData = filterDataByDateRange(filteredData, startDate, endDate);
+                    }
+                    
+                    currentData = filteredData;
+                    populateDashboard(currentData);
+                    populateNotifications();
+                    showNotificationToast('Filters applied successfully!');
+                }, 300);
+            }
             
-            document.getElementById('startDate').valueAsDate = lastWeek;
-            document.getElementById('endDate').valueAsDate = today;
+            function setupEventListeners() {
+                document.getElementById('applyFilters').addEventListener('click', applyFilters);
+                
+                const notificationBell = document.getElementById('notificationBell');
+                const notificationPanel = document.getElementById('notificationPanel');
+                const overlay = document.getElementById('overlay');
+                const closeNotifications = document.getElementById('closeNotifications');
+                
+                const toggleNotifications = () => {
+                    notificationPanel.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                    document.body.style.overflow = notificationPanel.classList.contains('active') ? 'hidden' : '';
+                };
+                
+                notificationBell.addEventListener('click', toggleNotifications);
+                closeNotifications.addEventListener('click', toggleNotifications);
+                overlay.addEventListener('click', toggleNotifications);
+                
+                document.getElementById('notificationList').addEventListener('click', (e) => {
+                    const item = e.target.closest('.notification-item');
+                    if (item) {
+                        markNotificationAsRead(parseInt(item.dataset.id));
+                    }
+                });
+                
+                document.querySelectorAll('.btn-learn-more').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const extraContent = e.target.closest('.card').querySelector('.card-extra-content');
+                        const isVisible = extraContent.classList.toggle('visible');
+                        e.target.textContent = isVisible ? 'Show Less' : 'Learn More';
+                    });
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && notificationPanel.classList.contains('active')) {
+                        toggleNotifications();
+                    }
+                });
+            }
+
+            function initDashboard() {
+                const today = new Date();
+                const lastWeek = new Date();
+                lastWeek.setDate(today.getDate() - 7);
+                
+                // Format dates for input fields (YYYY-MM-DD)
+                document.getElementById('endDate').valueAsDate = today;
+                document.getElementById('startDate').valueAsDate = lastWeek;
+
+                populateDashboard(currentData);
+                populateNotifications();
+                setupEventListeners();
+            }
+
+            initDashboard();
         });
     </script>
 </body>
