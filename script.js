@@ -1,849 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-    :root {
-                --charcoal: #1A202C;
-                --slate: #2D3748;
-                --electric-blue: #4299E1;
-                --emerald-green: #48BB78;
-                --light-gray: #A0AEC0;
-                --white: #FFFFFF;
-                --warning: #F6AD55;
-                --danger: #F56565;
-                --shadow-color: rgba(0, 0, 0, 0.1);
-                --shadow-hover-color: rgba(0, 0, 0, 0.2);
-                --font-family: 'Quicksand', sans-serif;
-            }
-
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: var(--font-family);
-            }
-
-            body {
-                background-color: var(--charcoal);
-                color: var(--light-gray);
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            ::-webkit-scrollbar { width: 8px; }
-            ::-webkit-scrollbar-track { background: var(--charcoal); }
-            ::-webkit-scrollbar-thumb { background: var(--slate); border-radius: 4px; }
-            ::-webkit-scrollbar-thumb:hover { background: var(--electric-blue); }
-
-            .container {
-                width: 95%;
-                max-width: 1600px;
-                margin: 0 auto;
-                padding: 20px;
-                flex: 1;
-            }
-
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 30px;
-                flex-wrap: wrap;
-                gap: 20px;
-            }
-
-            .logo { font-size: 24px; font-weight: 700; color: var(--white); }
-            .logo span { color: var(--electric-blue); }
-
-            .user-info { display: flex; align-items: center; gap: 20px; }
-            .notification-bell { 
-                position: relative; 
-                cursor: pointer; 
-                color: var(--light-gray); 
-                font-size: 1.3rem; 
-                transition: transform 0.2s;
-            }
-            .notification-bell:hover {
-                transform: scale(1.1);
-                color: var(--white);
-            }
-            .notification-badge {
-                position: absolute; 
-                top: -5px; 
-                right: -8px;
-                background-color: var(--danger); 
-                color: white;
-                border-radius: 50%; 
-                width: 18px; 
-                height: 18px;
-                display: none;
-                align-items: center; 
-                justify-content: center;
-                font-size: 10px; 
-                font-weight: 700;
-                border: 2px solid var(--charcoal);
-            }
-            .notification-badge.active {
-                display: flex;
-            }
-            .user-avatar {
-                width: 40px; 
-                height: 40px; 
-                border-radius: 50%;
-                background-color: var(--slate); 
-                display: flex;
-                align-items: center; 
-                justify-content: center;
-                font-weight: 600; 
-                color: var(--white);
-                border: 2px solid var(--electric-blue);
-            }
-
-            /* Improved Bento Grid */
-            .dashboard-grid {
-                display: grid;
-                grid-template-areas:
-                    "sales inventory"
-                    "activity activity"
-                    "demographics quickstats"
-                    "reviews reviews";
-                grid-template-columns: 1.5fr 1.5fr;
-                grid-template-rows: auto 260px 220px 220px;
-                gap: 20px;
-                align-items: stretch;
-                margin-top: 20px;
-            }
-
-            #salesChartContainer { grid-area: sales; }
-            #inventoryChartContainer { grid-area: inventory; }
-            #activityChartContainer { grid-area: activity; }
-            #customerChartContainer { grid-area: demographics; }
-            #quickStats { grid-area: quickstats; }
-            #reviewsContainer { grid-area: reviews; }
-
-            @media (max-width: 1200px) {
-                .dashboard-grid {
-                    grid-template-areas:
-                        "sales"
-                        "inventory"
-                        "activity"
-                        "demographics"
-                        "quickstats"
-                        "reviews";
-                    grid-template-columns: 1fr;
-                    grid-template-rows: repeat(6, auto);
-                }
-            }
-
-            @media (max-width: 768px) {
-                .dashboard-grid {
-                    grid-template-areas:
-                        "sales"
-                        "inventory"
-                        "activity"
-                        "demographics"
-                        "quickstats"
-                        "reviews";
-                    grid-template-columns: 1fr;
-                    grid-template-rows: repeat(6, auto);
-                    gap: 16px;
-                }
-                .card {
-                    min-height: 160px;
-                }
-            }
-
-            .card {
-                background: rgba(255,255,255,0.03);
-                border-radius: 12px;
-                box-shadow: 0 2px 16px var(--shadow-color);
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                min-height: 220px;
-                position: relative;
-                transition: transform 0.3s, box-shadow 0.3s;
-            }
-
-            .card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            }
-
-            .card-header {
-                margin-bottom: 15px;
-            }
-
-            .card-header h3 {
-                color: var(--white);
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            .card-content {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            .stat-item {
-                margin-bottom: 12px;
-            }
-
-            .stat-label {
-                font-size: 13px;
-                color: var(--light-gray);
-                margin-bottom: 4px;
-            }
-
-            .stat-value {
-                font-size: 20px;
-                font-weight: 600;
-                color: var(--white);
-            }
-
-            @media (max-width: 1200px) {
-                .dashboard-grid {
-                    grid-template-areas:
-                        "sales inventory"
-                        "activity demographics"
-                        "quickstats reviews";
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: auto auto auto;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .dashboard-grid {
-                    grid-template-areas:
-                        "sales"
-                        "inventory"
-                        "activity"
-                        "demographics"
-                        "quickstats"
-                        "reviews";
-                    grid-template-columns: 1fr;
-                    grid-template-rows: repeat(6, auto);
-                }
-                
-                .card {
-                    min-height: 200px;
-                }
-            }
-
-            /* Responsive filters */
-            .filters {
-                display: flex;
-                gap: 15px;
-                margin-bottom: 25px;
-                flex-wrap: wrap;
-                align-items: flex-end;
-                background: rgba(255,255,255,0.02);
-                border-radius: 12px;
-                padding: 18px 20px;
-                box-shadow: 0 2px 12px var(--shadow-color);
-                transition: background 0.2s;
-            }
-            
-            .filter-group {
-                display: flex;
-                flex-direction: column;
-                min-width: 120px;
-                flex: 1 1 160px;
-                margin-bottom: 0;
-            }
-            
-            .filters .btn-primary {
-                align-self: flex-end;
-                margin-top: 0;
-                min-width: 120px;
-            }
-
-            @media (max-width: 900px) {
-                .filters {
-                    flex-direction: column;
-                    gap: 0;
-                    align-items: stretch;
-                    padding: 10px 4px;
-                }
-                .filter-group {
-                    width: 100%;
-                    min-width: 0;
-                    margin-bottom: 0 !important;
-                    padding: 0;
-                    max-height: min-content; /* Adiciona altura mínima para evitar espaço extra */
-                }
-                .filter-label {
-                    margin-bottom: 4px;
-                }
-                .filter-group input,
-                .filter-group select,
-                .filter-group .custom-select,
-                .filter-group .custom-date-input {
-                    margin-bottom: 12px; /* Espaço entre campos */
-                    width: 100%;
-                    box-sizing: border-box;
-                }
-                /* Remove o espaço do último campo do último grupo */
-                .filter-group:last-child input,
-                .filter-group:last-child select,
-                .filter-group:last-child .custom-select,
-                .filter-group:last-child .custom-date-input {
-                    margin-bottom: 0;
-                }
-                .filters .btn-primary {
-                    width: 100%;
-                    align-self: stretch;
-                    margin-top: 0;
-                }
-            }
-
-            @media (max-width: 600px) {
-                .filters {
-                    padding: 8px 2px;
-                    border-radius: 10px;
-                    gap: 0;
-                }
-                .filter-group {
-                    margin-bottom: 14px !important;
-                    padding: 0;
-                    max-height: min-content;
-                }
-                .filter-group:last-child {
-                    margin-bottom: 0 !important;
-                }
-                .filter-label {
-                    margin-bottom: 2px;
-                    font-size: 13px;
-                    color: var(--light-gray);
-                    font-weight: 600;
-                }
-                .filter-group input,
-                .filter-group select,
-                .filter-group .custom-select,
-                .filter-group .custom-date-input {
-                    margin-bottom: 0;
-                    width: 100%;
-                    box-sizing: border-box;
-                    padding: 12px 12px;
-                    border-radius: 10px;
-                    font-size: 15px;
-                    background: var(--slate);
-                    color: var(--white);
-                    border: 1px solid var(--charcoal);
-                    transition: border-color 0.2s;
-                }
-                .filter-group input:focus,
-                .filter-group select:focus {
-                    border-color: var(--electric-blue);
-                    outline: none;
-                }
-                .filters .btn-primary {
-                    width: 100%;
-                    margin-top: 8px;
-                    padding: 14px 0;
-                    font-size: 16px;
-                    border-radius: 10px;
-                    font-weight: 700;
-                    letter-spacing: 0.5px;
-                }
-            }
-
-            .filter-label { 
-                font-size: 14px; 
-                font-weight: 500; 
-                color: var(--white); 
-                margin-bottom: 6px;
-            }
-
-            /* Custom Dropdown */
-            .custom-select {
-                position: relative;
-                width: 100%;
-                min-width: 120px;
-                user-select: none;
-            }
-            
-            .custom-select-selected {
-                background-color: var(--charcoal);
-                color: var(--white);
-                padding: 10px 12px;
-                border: 1px solid var(--slate);
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                transition: border-color 0.2s;
-            }
-            
-            .custom-select-selected:hover {
-                border-color: var(--electric-blue);
-            }
-            
-            .custom-select-arrow {
-                margin-left: 10px;
-                font-size: 12px;
-                color: var(--electric-blue);
-                transition: transform 0.2s;
-            }
-            
-            .custom-select-options {
-                display: none;
-                position: absolute;
-                top: 110%;
-                left: 0;
-                width: 100%;
-                background: var(--slate);
-                border: 1px solid var(--electric-blue);
-                border-radius: 8px;
-                z-index: 10;
-                box-shadow: 0 4px 15px var(--shadow-color);
-                max-height: 200px;
-                overflow-y: auto;
-            }
-            
-            .custom-select-options.active {
-                display: block;
-            }
-            
-            .custom-select-option {
-                padding: 10px 14px;
-                cursor: pointer;
-                color: var(--white);
-                transition: background 0.2s;
-                font-size: 14px;
-            }
-            
-            .custom-select-option:hover, 
-            .custom-select-option.selected {
-                background: var(--electric-blue);
-                color: var(--white);
-            }
-
-            /* Custom Date Picker */
-            .custom-date-input {
-                position: relative;
-                width: 100%;
-            }
-            
-            .custom-date-display {
-                background-color: var(--charcoal);
-                color: var(--white);
-                padding: 10px 12px;
-                border: 1px solid var(--slate);
-                border-radius: 8px;
-                font-size: 14px;
-                cursor: pointer;
-                width: 100%;
-                text-align: left;
-                transition: border-color 0.2s;
-            }
-            
-            .custom-date-display:hover {
-                border-color: var(--electric-blue);
-            }
-            
-            .custom-date-calendar {
-                display: none;
-                position: absolute;
-                top: 110%;
-                left: 0;
-                background: var(--slate);
-                border: 1px solid var(--electric-blue);
-                border-radius: 8px;
-                z-index: 20;
-                padding: 12px;
-                min-width: 240px;
-                color: var(--white);
-                box-shadow: 0 4px 15px var(--shadow-color);
-            }
-            
-            .custom-date-calendar.active {
-                display: block;
-            }
-            
-            .custom-date-calendar table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 8px;
-            }
-            
-            .custom-date-calendar th, 
-            .custom-date-calendar td {
-                text-align: center;
-                padding: 6px;
-                cursor: pointer;
-                border-radius: 4px;
-                font-size: 13px;
-            }
-            
-            .custom-date-calendar th {
-                color: var(--electric-blue);
-                font-weight: 600;
-                font-size: 12px;
-            }
-            
-            .custom-date-calendar td:hover, 
-            .custom-date-calendar td.selected {
-                background: var(--electric-blue);
-                color: var(--white);
-            }
-            
-            .custom-date-calendar .calendar-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 10px;
-            }
-            
-            .custom-date-calendar .calendar-title {
-                font-weight: 600;
-                color: var(--white);
-            }
-            
-            .custom-date-calendar .calendar-nav {
-                cursor: pointer;
-                color: var(--electric-blue);
-                font-size: 16px;
-                padding: 0 8px;
-                user-select: none;
-                transition: color 0.2s;
-            }
-            
-            .custom-date-calendar .calendar-nav:hover {
-                color: var(--white);
-            }
-
-            .btn-primary {
-                padding: 10px 16px; 
-                border-radius: 8px; 
-                border: none; 
-                font-weight: 600;
-                cursor: pointer; 
-                transition: all 0.3s ease;
-                background-color: var(--electric-blue); 
-                color: white;
-                font-size: 14px;
-                height: fit-content;
-            }
-            
-            .btn-primary:hover { 
-                background-color: #3182ce; 
-                transform: translateY(-1px);
-            }
-            
-            .notification-panel {
-                position: fixed; 
-                top: 0; 
-                right: -100%; 
-                width: 100%;
-                max-width: 400px;
-                height: 100vh;
-                background-color: var(--slate); 
-                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-                z-index: 1000; 
-                transition: right 0.4s ease-in-out; 
-                padding: 20px;
-                display: flex; 
-                flex-direction: column;
-            }
-            
-            .notification-panel.active { 
-                right: 0; 
-            }
-            
-            .notification-header { 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center; 
-                margin-bottom: 20px; 
-            }
-            
-            .notification-title { 
-                font-size: 18px; 
-                font-weight: 600; 
-                color: var(--white); 
-            }
-            
-            .close-notifications { 
-                background: none; 
-                border: none; 
-                color: var(--light-gray); 
-                font-size: 24px; 
-                cursor: pointer;
-                transition: color 0.2s;
-            }
-            
-            .close-notifications:hover {
-                color: var(--white);
-            }
-            
-            .notification-list { 
-                flex-grow: 1; 
-                overflow-y: auto;
-                padding-right: 5px;
-            }
-            
-            .notification-item { 
-                padding: 15px; 
-                margin-bottom: 15px; 
-                background-color: rgba(255, 255, 255, 0.05); 
-                border-radius: 8px; 
-                border-left: 4px solid var(--electric-blue); 
-                position: relative;
-                transition: transform 0.2s, background-color 0.2s;
-            }
-            
-            .notification-item:hover {
-                transform: translateX(2px);
-                background-color: rgba(255, 255, 255, 0.08);
-            }
-            
-            .notification-item.danger { 
-                border-left-color: var(--danger); 
-            }
-            
-            .notification-time {
-                font-size: 12px;
-                color: var(--light-gray);
-                margin-top: 5px;
-            }
-            
-            .notification-read {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                width: 8px;
-                height: 8px;
-                background-color: var(--electric-blue);
-                border-radius: 50%;
-            }
-            
-            .notification-item.read { 
-                opacity: 0.7; 
-            }
-            
-            .notification-item.read .notification-read { 
-                display: none; 
-            }
-            
-            .overlay { 
-                position: fixed; 
-                top: 0; 
-                left: 0; 
-                width: 100%; 
-                height: 100%; 
-                background-color: rgba(0, 0, 0, 0.5); 
-                z-index: 999; 
-                opacity: 0; 
-                pointer-events: none; 
-                transition: opacity 0.3s ease; 
-            }
-            
-            .overlay.active { 
-                opacity: 1; 
-                pointer-events: all; 
-            }
-
-            .toast-notification {
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                background-color: var(--slate);
-                color: var(--white);
-                padding: 15px 25px;
-                border-radius: 8px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                z-index: 1002;
-                transition: opacity 0.5s ease, transform 0.5s ease;
-                opacity: 0;
-                transform: translate(-50%, -20px);
-                display: flex;
-                align-items: center;
-            }
-            
-            .loading-state {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                min-height: 150px;
-            }
-
-            .loading-spinner {
-                border: 3px solid rgba(255, 255, 255, 0.1);
-                border-radius: 50%;
-                border-top: 3px solid var(--electric-blue);
-                width: 30px;
-                height: 30px;
-                animation: spin 1s linear infinite;
-            }
-
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-
-            .empty-state {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                color: var(--light-gray);
-                text-align: center;
-                padding: 20px;
-                min-height: 150px;
-            }
-
-            .empty-state i {
-                font-size: 40px;
-                margin-bottom: 15px;
-                color: var(--electric-blue);
-            }
-
-            
-            .footer {
-                width: 100%;
-                background: var(--slate);
-                color: var(--light-gray);
-                text-align: center;
-                padding: 18px 0;
-                font-size: 14px;
-                margin-top: 40px;
-                border-top: 1px solid rgba(255,255,255,0.07);
-            }
-    </style>
-   
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">Shop<span>Dashboard</span></div>
-            <div class="user-info">
-                <div class="notification-bell" id="notificationBell" title="Notifications" aria-label="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <div class="notification-badge" id="notificationBadge" aria-live="polite"></div>
-                </div>
-                <div class="user-avatar" aria-label="User avatar">AD</div>
-            </div>
-        </header>
-
-        <main>
-            <section class="filters">
-                <div class="filter-group">
-                    <label for="startDate" class="filter-label">From:</label>
-                    <div class="custom-date-input" id="customStartDate"></div>
-                </div>
-                <div class="filter-group">
-                    <label for="endDate" class="filter-label">To:</label>
-                    <div class="custom-date-input" id="customEndDate"></div>
-                </div>
-                <div class="filter-group">
-                    <label for="categoryFilter" class="filter-label">Category:</label>
-                    <div class="custom-select" id="customCategory"></div>
-                </div>
-                <button class="btn btn-primary" id="applyFilters" aria-label="Apply filters">Apply Filters</button>
-            </section>
-            
-            <div class="dashboard-grid">
-                <!-- Primeira linha: Sales e Inventory -->
-                <div class="card" id="salesChartContainer">
-                    <div class="card-header">
-                        <h3>Sales Overview</h3>
-                    </div>
-                    <div class="card-content">
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-                <div class="card" id="inventoryChartContainer">
-                    <div class="card-header">
-                        <h3>Inventory Status</h3>
-                    </div>
-                    <div class="card-content">
-                        <canvas id="inventoryChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Segunda linha: Customer Activity ocupa as duas colunas -->
-                <div class="card" id="activityChartContainer">
-                    <div class="card-header">
-                        <h3>Customer Activity</h3>
-                    </div>
-                    <div class="card-content">
-                        <canvas id="activityChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Terceira linha: Demographics e Quick Stats -->
-                <div class="card" id="customerChartContainer">
-                    <div class="card-header">
-                        <h3>Customer Demographics</h3>
-                    </div>
-                    <div class="card-content">
-                        <canvas id="customerChart"></canvas>
-                    </div>
-                </div>
-                <div class="card" id="quickStats">
-                    <div class="card-header">
-                        <h3>Quick Stats</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <div class="stat-label">Total Revenue</div>
-                            <div class="stat-value" id="revenueValue">$0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Total Orders</div>
-                            <div class="stat-value" id="ordersValue">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quarta linha: Reviews ocupa as duas colunas -->
-                <div class="card" id="reviewsContainer">
-                    <div class="card-header">
-                        <h3>Recent Reviews</h3>
-                    </div>
-                    <div class="card-content">
-                        <!-- Conteúdo gerado pelo JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <div class="overlay" id="notificationOverlay"></div>
-    <div class="notification-panel" id="notificationPanel">
-        <div class="notification-header">
-            <h4 class="notification-title">Notifications</h4>
-            <button class="close-notifications" id="closeNotifications">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="notification-list" id="notificationList">
-            <!-- Content will be generated by JavaScript -->
-        </div>
-    </div>
-    
-    <footer class="footer">
-        &copy; 2025 ShopDashboard. All rights reserved.
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script>
+<script>
+    // Mock data for testing
     const mockData = {
         all: {
             sales: { 
@@ -880,6 +36,7 @@
             },
             inventory: { labels: ['Smartphone', 'Headphones', 'Notebook'], data: [5, 3, 12] },
             customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [35, 50, 10, 5] },
+            // reviews e notifications não são mais usados aqui
             orders: 92,
             revenue: 13799
         },
@@ -895,12 +52,13 @@
             },
             inventory: { labels: ['T-Shirts', 'Jeans', 'Jackets'], data: [45, 32, 18] },
             customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [25, 40, 20, 15] },
+            // reviews e notifications não são mais usados aqui
             orders: 92,
             revenue: 10781
         }
     };
 
-    // Always use reviews and notifications from mockData.all
+    // Sempre use as reviews e notifications do mockData.all
     const defaultReviews = mockData.all.reviews;
     const defaultNotifications = mockData.all.notifications;
 
@@ -944,7 +102,7 @@
             activity: data.activity ? { ...data.activity } : undefined,
         };
 
-        // Filter sales by date range
+        // Filtrar sales
         if (filteredData.sales && filteredData.sales.labels) {
             const salesIndices = [];
             data.sales.labels.forEach((date, index) => {
@@ -957,7 +115,7 @@
             filteredData.sales.data = salesIndices.map(i => data.sales.data[i]);
         }
 
-        // Filter activity by date range
+        // Filtrar activity
         if (filteredData.activity && filteredData.activity.labels) {
             const activityIndices = [];
             data.activity.labels.forEach((date, index) => {
@@ -974,7 +132,7 @@
         filteredData.orders = filteredData.sales && filteredData.sales.data ? filteredData.sales.data.length : 0;
         filteredData.revenue = filteredData.sales && filteredData.sales.data ? filteredData.sales.data.reduce((sum, value) => sum + value, 0) : 0;
 
-        // Always use default reviews and notifications
+        // Sempre usa as reviews e notifications padrão
         filteredData.reviews = defaultReviews;
         filteredData.notifications = defaultNotifications;
 
@@ -1008,8 +166,8 @@
             tooltip: {
                 enabled: true,
                 backgroundColor: 'rgba(45, 55, 72, 0.95)',
-                titleColor: 'white', // Tooltip title text color
-                bodyColor: 'white',  // Tooltip body text color (changed from var(--light-gray) to white)
+                titleColor: 'white',
+                bodyColor: 'var(--light-gray)',
                 titleFont: { family: 'Quicksand', size: 14, weight: '600' },
                 bodyFont: { family: 'Quicksand', size: 12, weight: '500' },
                 borderColor: 'rgba(66, 153, 225, 0.5)',
@@ -1090,8 +248,8 @@
                             'rgba(66, 153, 225, 0.7)', 'rgba(72, 187, 120, 0.7)',
                             'rgba(246, 173, 85, 0.7)', 'rgba(245, 101, 101, 0.7)'
                         ].slice(0, data.inventory.labels.length),
-                        borderColor: 'lightgray',
-                        borderWidth: 2
+                        borderColor: 'lightgray', // Adicionado para borda igual aos outros charts
+                        borderWidth: 2           // Opcional: deixa a borda mais visível
                     }]
                 },
                 options: chartOptions()
@@ -1170,7 +328,7 @@
         document.getElementById('revenueValue').textContent = data.revenue ? `$${data.revenue.toLocaleString()}` : '$0';
         document.getElementById('ordersValue').textContent = data.orders || '0';
 
-        // Reviews section (always uses default)
+        // Reviews section (sempre usa padrão)
         const reviewsContainer = document.getElementById('reviewsContainer');
         if (defaultReviews && defaultReviews.length > 0) {
             reviewsContainer.innerHTML = defaultReviews.map(review => `
@@ -1195,7 +353,7 @@
         }
     }
 
-    // Notifications (always uses default)
+    // Notificações (sempre usa padrão)
     function updateNotificationBadge() {
         const badge = document.getElementById('notificationBadge');
         const notifications = defaultNotifications || [];
@@ -1212,7 +370,7 @@
     function populateNotifications() {
         updateNotificationBadge();
         const list = document.getElementById('notificationList');
-        // Show only unread notifications
+        // Mostra apenas as não lidas
         const notifications = (defaultNotifications || []).filter(n => !n.read);
         if (notifications.length === 0) {
             list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications to display</p></div>`;
@@ -1227,12 +385,13 @@
         }
     }
 
-    // Always filter from the original mockData
+    // Filtro robusto: sempre filtra a partir do mockData original
     function applyFilters() {
         const startDate = document.getElementById('startDate')?.value ? new Date(document.getElementById('startDate').value) : null;
         const endDate = document.getElementById('endDate')?.value ? new Date(document.getElementById('endDate').value) : null;
         const category = document.getElementById('categoryFilter')?.value || 'all';
 
+        // Sempre filtrar a partir do mockData original
         const baseData = JSON.parse(JSON.stringify(mockData[category]));
         const filtered = filterDataByDateRange(baseData, startDate, endDate);
 
@@ -1243,7 +402,7 @@
         populateNotifications();
     }
 
-    // Custom Select (Dropdown) - does NOT update charts on category change
+    // Custom Select (Dropdown) - NÃO atualiza charts ao trocar categoria
     function createCustomSelect(containerId, options, defaultValue) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -1272,6 +431,11 @@
                 selectedDiv.setAttribute('aria-expanded', 'false');
                 optionsDiv.classList.remove('active');
                 document.getElementById('categoryFilter').value = opt.value;
+
+                // Remova o reset das datas ao trocar de categoria!
+                // resetDatePickersForCategory(opt.value); // <-- Removido
+
+                // NÃO chama applyFilters aqui!
             });
             optionsDiv.appendChild(optDiv);
         });
@@ -1294,7 +458,7 @@
             }
         });
 
-        // Hidden field for integration
+        // Hidden field para integração
         let hidden = document.getElementById('categoryFilter');
         if (!hidden) {
             hidden = document.createElement('input');
@@ -1334,7 +498,7 @@
             prev.className = 'calendar-nav';
             prev.innerHTML = '&#9664;';
             prev.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Impede o fechamento do modal ao clicar na seta
                 if (currentMonth === 0) {
                     currentMonth = 11;
                     currentYear--;
@@ -1347,7 +511,7 @@
             next.className = 'calendar-nav';
             next.innerHTML = '&#9654;';
             next.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Impede o fechamento do modal ao clicar na seta
                 if (currentMonth === 11) {
                     currentMonth = 0;
                     currentYear++;
@@ -1422,7 +586,7 @@
 
         displayDiv.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Close all other calendars before opening this one
+            // Fecha todos os outros calendários antes de abrir este
             document.querySelectorAll('.custom-date-calendar.active').forEach(cal => {
                 if (cal !== calendarDiv) {
                     cal.classList.remove('active');
@@ -1436,7 +600,7 @@
             }
         });
 
-        // Prevent closing calendar when clicking inside
+        // Corrige: não fecha o calendário ao clicar nas setas ou dentro do calendário
         calendarDiv.addEventListener('click', (e) => {
             e.stopPropagation();
         });
@@ -1448,7 +612,7 @@
             }
         });
 
-        // Hidden field for integration
+        // Hidden field para integração
         let hidden = container.querySelector('input[type=hidden]');
         if (!hidden) {
             hidden = document.createElement('input');
@@ -1537,7 +701,4 @@
     }
 
     document.addEventListener('DOMContentLoaded', initDashboard);
-    </script>
-        
-</body>
-</html>
+</script>
