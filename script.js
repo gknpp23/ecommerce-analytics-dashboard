@@ -1,176 +1,152 @@
-<script>
-    // Mock data for testing
-    const mockData = {
-        all: {
-            sales: { 
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
-                data: [1200, 1900, 1500, 2200, 1800, 2500, 2800] 
-            },
-            activity: {
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
-                activeUsers: [150, 230, 180, 250, 200, 280, 320],
-                newUsers: [30, 45, 35, 50, 40, 55, 60]
-            },
-            inventory: { labels: ['Smartphone', 'Headphones', 'Notebook', 'Monitor'], data: [5, 3, 12, 25] },
-            customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [30, 45, 15, 10] },
-            reviews: [
-                { id: 1, author: 'Maria J.', rating: 5, text: 'Love the product! Fast delivery and exceeded expectations.', date: '2023-05-15' },
-                { id: 2, author: 'John S.', rating: 4, text: 'Great sound quality. Battery life could be better.', date: '2023-05-14' },
-            ],
-            orders: 184,
-            revenue: 24580,
-            notifications: [
-                { id: 1, type: 'danger', message: 'Product "Headphones Pro" has only 3 units left in stock.', date: '2023-05-15T10:30:00', read: false },
-                { id: 2, type: 'danger', message: 'Product "Smartphone X9" has only 5 units left in stock.', date: '2023-05-14T14:15:00', read: false },
-            ]
+const mockData = {
+    all: {
+        sales: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            data: [1200, 1900, 1500, 2200, 1800, 2500, 2800]
         },
-        electronics: {
-            sales: { 
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
-                data: [800, 1200, 900, 1500, 1100, 1800, 2000] 
-            },
-            activity: {
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
-                activeUsers: [100, 150, 120, 180, 140, 200, 220],
-                newUsers: [20, 30, 25, 35, 30, 40, 45]
-            },
-            inventory: { labels: ['Smartphone', 'Headphones', 'Notebook'], data: [5, 3, 12] },
-            customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [35, 50, 10, 5] },
-            // reviews e notifications não são mais usados aqui
-            orders: 92,
-            revenue: 13799
+        activity: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            activeUsers: [150, 230, 180, 250, 200, 280, 320],
+            newUsers: [30, 45, 35, 50, 40, 55, 60]
         },
-        clothing: {
-            sales: { 
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'], 
-                data: [400, 700, 600, 700, 700, 700, 800] 
-            },
-            activity: {
-                labels: ['2023-05-01', '2023-05-02', '2023-05-03', '2023-05-04', '2023-05-05', '2023-05-06', '2023-05-07'],
-                activeUsers: [50, 80, 60, 70, 60, 80, 100],
-                newUsers: [10, 15, 10, 15, 10, 15, 15]
-            },
-            inventory: { labels: ['T-Shirts', 'Jeans', 'Jackets'], data: [45, 32, 18] },
-            customers: { labels: ['18-24', '25-34', '35-44', '45+'], data: [25, 40, 20, 15] },
-            // reviews e notifications não são mais usados aqui
-            orders: 92,
-            revenue: 10781
-        }
-    };
-
-    // Sempre use as reviews e notifications do mockData.all
-    const defaultReviews = mockData.all.reviews;
-    const defaultNotifications = mockData.all.notifications;
-
-    let currentCategory = 'all';
-    let currentData = JSON.parse(JSON.stringify(mockData.all));
-    let chartInstances = {};
-
-    function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(dateString).toLocaleDateString('en-US', options);
+        inventory: { labels: ["Smartphone", "Headphones", "Notebook", "Monitor"], data: [5, 3, 12, 25] },
+        customers: { labels: ["18-24", "25-34", "35-44", "45+"], data: [30, 45, 15, 10] },
+        reviews: [
+            { id: 1, author: "Maria J.", rating: 5, text: "Love the product! Fast delivery and exceeded expectations.", date: "2023-05-15" },
+            { id: 2, author: "John S.", rating: 4, text: "Great sound quality. Battery life could be better.", date: "2023-05-14" }
+        ],
+        orders: 184,
+        revenue: 24580,
+        notifications: [
+            { id: 1, type: "danger", message: "Product \"Headphones Pro\" has only 3 units left in stock.", date: "2023-05-15T10:30:00", read: false },
+            { id: 2, type: "danger", message: "Product \"Smartphone X9\" has only 5 units left in stock.", date: "2023-05-14T14:15:00", read: false }
+        ]
+    },
+    electronics: {
+        sales: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            data: [800, 1200, 900, 1500, 1100, 1800, 2000]
+        },
+        activity: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            activeUsers: [100, 150, 120, 180, 140, 200, 220],
+            newUsers: [20, 30, 25, 35, 30, 40, 45]
+        },
+        inventory: { labels: ["Smartphone", "Headphones", "Notebook"], data: [5, 3, 12] },
+        customers: { labels: ["18-24", "25-34", "35-44", "45+"], data: [35, 50, 10, 5] },
+        orders: 92,
+        revenue: 13799
+    },
+    clothing: {
+        sales: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            data: [400, 700, 600, 700, 700, 700, 800]
+        },
+        activity: {
+            labels: ["2023-05-01", "2023-05-02", "2023-05-03", "2023-05-04", "2023-05-05", "2023-05-06", "2023-05-07"],
+            activeUsers: [50, 80, 60, 70, 60, 80, 100],
+            newUsers: [10, 15, 10, 15, 10, 15, 15]
+        },
+        inventory: { labels: ["T-Shirts", "Jeans", "Jackets"], data: [45, 32, 18] },
+        customers: { labels: ["18-24", "25-34", "35-44", "45+"], data: [25, 40, 20, 15] },
+        orders: 92,
+        revenue: 10781
     }
+};
 
-    function formatShortDate(dateString) {
-        const options = { month: 'short', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('en-US', options);
-    }
+const defaultReviews = cloneJson(mockData.all.reviews);
+const defaultNotifications = cloneJson(mockData.all.notifications);
+const chartContainers = {
+    salesChart: "salesChartContainer",
+    inventoryChart: "inventoryChartContainer",
+    activityChart: "activityChartContainer",
+    customerChart: "customerChartContainer"
+};
+const chartInstances = {};
 
-    function getCategoryDateRange(category) {
-        const sales = mockData[category].sales;
-        if (!sales || !sales.labels || sales.labels.length === 0) return [null, null];
-        const dates = sales.labels.map(d => new Date(d));
-        const min = new Date(Math.min(...dates));
-        const max = new Date(Math.max(...dates));
-        return [min, max];
-    }
+let currentCategory = "all";
+let currentData = withSharedContent(mockData.all);
+let debounceTimer;
 
-    function resetDatePickersForCategory(category) {
-        const [min, max] = getCategoryDateRange(category);
-        if (min && max) {
-            createCustomDatePicker('customStartDate', min);
-            createCustomDatePicker('customEndDate', max);
-        }
-    }
+function cloneData(data) {
+    return cloneJson(data);
+}
 
-    function filterDataByDateRange(data, startDate, endDate) {
-        if (!startDate || !endDate) return data;
+function cloneJson(data) {
+    return JSON.parse(JSON.stringify(data));
+}
 
-        const filteredData = {
-            ...data,
-            sales: data.sales ? { ...data.sales } : undefined,
-            activity: data.activity ? { ...data.activity } : undefined,
-        };
+function withSharedContent(data) {
+    const merged = cloneData(data);
+    merged.reviews = cloneData(defaultReviews);
+    merged.notifications = defaultNotifications;
+    return merged;
+}
 
-        // Filtrar sales
-        if (filteredData.sales && filteredData.sales.labels) {
-            const salesIndices = [];
-            data.sales.labels.forEach((date, index) => {
-                const currentDate = new Date(date);
-                if (currentDate >= startDate && currentDate <= endDate) {
-                    salesIndices.push(index);
-                }
-            });
-            filteredData.sales.labels = salesIndices.map(i => data.sales.labels[i]);
-            filteredData.sales.data = salesIndices.map(i => data.sales.data[i]);
-        }
+function parseLocalDate(value) {
+    if (!value) return null;
+    if (value instanceof Date) return new Date(value.getFullYear(), value.getMonth(), value.getDate());
 
-        // Filtrar activity
-        if (filteredData.activity && filteredData.activity.labels) {
-            const activityIndices = [];
-            data.activity.labels.forEach((date, index) => {
-                const currentDate = new Date(date);
-                if (currentDate >= startDate && currentDate <= endDate) {
-                    activityIndices.push(index);
-                }
-            });
-            filteredData.activity.labels = activityIndices.map(i => data.activity.labels[i]);
-            filteredData.activity.activeUsers = activityIndices.map(i => data.activity.activeUsers[i]);
-            filteredData.activity.newUsers = activityIndices.map(i => data.activity.newUsers[i]);
-        }
+    const [datePart] = String(value).split("T");
+    const parts = datePart.split("-").map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+}
 
-        filteredData.orders = filteredData.sales && filteredData.sales.data ? filteredData.sales.data.length : 0;
-        filteredData.revenue = filteredData.sales && filteredData.sales.data ? filteredData.sales.data.reduce((sum, value) => sum + value, 0) : 0;
+function toInputDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
 
-        // Sempre usa as reviews e notifications padrão
-        filteredData.reviews = defaultReviews;
-        filteredData.notifications = defaultNotifications;
+function formatDate(value) {
+    const date = value.includes("T") ? new Date(value) : parseLocalDate(value);
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: value.includes("T") ? "2-digit" : undefined,
+        minute: value.includes("T") ? "2-digit" : undefined
+    }).format(date);
+}
 
-        return filteredData;
-    }
+function formatShortDate(value) {
+    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(parseLocalDate(value));
+}
 
-    function ensureCanvas(parentId, canvasId) {
-        const parent = document.getElementById(parentId);
-        if (!parent) return;
-        if (!parent.querySelector('canvas')) {
-            parent.innerHTML = `<canvas id="${canvasId}"></canvas>`;
-        }
-    }
+function getCategoryDateRange(category) {
+    const labels = mockData[category]?.sales?.labels || [];
+    const dates = labels.map(parseLocalDate).filter(Boolean);
+    if (!dates.length) return [null, null];
+    return [new Date(Math.min(...dates)), new Date(Math.max(...dates))];
+}
 
-    const chartOptions = (isDonut = false) => ({
+function chartOptions(isDonut = false) {
+    return {
         responsive: true,
         maintainAspectRatio: false,
-        animation: { duration: 1000, easing: 'easeOutQuart' },
+        animation: { duration: 700, easing: "easeOutQuart" },
         plugins: {
             legend: {
                 display: true,
-                position: isDonut ? 'right' : 'top',
+                position: isDonut ? "right" : "top",
                 labels: {
-                    color: 'lightgray',
-                    font: { family: 'Quicksand', weight: '600', size: 12 },
-                    padding: 20,
+                    color: "#aeb7c4",
+                    font: { family: "Quicksand", weight: "700", size: 12 },
+                    padding: 18,
                     usePointStyle: true,
-                    pointStyle: 'circle',
+                    pointStyle: "circle"
                 }
             },
             tooltip: {
                 enabled: true,
-                backgroundColor: 'rgba(45, 55, 72, 0.95)',
-                titleColor: 'white',
-                bodyColor: 'var(--light-gray)',
-                titleFont: { family: 'Quicksand', size: 14, weight: '600' },
-                bodyFont: { family: 'Quicksand', size: 12, weight: '500' },
-                borderColor: 'rgba(66, 153, 225, 0.5)',
+                backgroundColor: "rgba(32, 36, 44, 0.96)",
+                titleColor: "#f6f8fb",
+                bodyColor: "#aeb7c4",
+                titleFont: { family: "Quicksand", size: 14, weight: "700" },
+                bodyFont: { family: "Quicksand", size: 12, weight: "600" },
+                borderColor: "rgba(76, 141, 246, 0.5)",
                 borderWidth: 1,
                 padding: 12,
                 cornerRadius: 8,
@@ -180,525 +156,563 @@
         },
         scales: isDonut ? {} : {
             y: {
-                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-                ticks: { color: 'white', font: { family: 'Quicksand', weight: '600' }, padding: 8 }
+                grid: { color: "rgba(255, 255, 255, 0.06)", drawBorder: false },
+                ticks: { color: "#aeb7c4", font: { family: "Quicksand", weight: "600" }, padding: 8 }
             },
             x: {
-                grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-                ticks: { color: 'white', font: { family: 'Quicksand', weight: '600' }, padding: 8 }
+                grid: { color: "rgba(255, 255, 255, 0.04)", drawBorder: false },
+                ticks: { color: "#aeb7c4", font: { family: "Quicksand", weight: "600" }, padding: 8 }
             }
         },
         elements: {
-            line: { tension: 0.4, borderWidth: 2 },
-            point: { radius: 4, hoverRadius: 6, backgroundColor: 'white', borderColor: 'var(--electric-blue)', borderWidth: 2 },
-            bar: { borderRadius: 4, borderSkipped: false }
+            line: { tension: 0.38, borderWidth: 2 },
+            point: { radius: 4, hoverRadius: 6, backgroundColor: "#f6f8fb", borderWidth: 2 },
+            bar: { borderRadius: 6, borderSkipped: false }
         }
+    };
+}
+
+function renderOrUpdateChart(canvasId, config) {
+    const container = document.getElementById(chartContainers[canvasId]) || document.getElementById(canvasId)?.parentElement;
+    if (!container) return;
+
+    if (typeof Chart === "undefined") {
+        clearChart(canvasId);
+        container.innerHTML = emptyState("fa-chart-simple", "Chart library unavailable");
+        return;
+    }
+
+    clearChart(canvasId);
+
+    container.innerHTML = `<canvas id="${canvasId}" role="img" aria-label="${config.data.datasets[0].label} chart"></canvas>`;
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    chartInstances[canvasId] = new Chart(ctx, config);
+}
+
+function clearChart(canvasId) {
+    if (!chartInstances[canvasId]) return;
+    chartInstances[canvasId].destroy();
+    delete chartInstances[canvasId];
+}
+
+function emptyState(icon, message) {
+    return `
+        <div class="empty-state">
+            <i class="fas ${icon}" aria-hidden="true"></i>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+function filterDataByDateRange(data, startDate, endDate) {
+    if (!startDate || !endDate) return data;
+
+    const filtered = cloneData(data);
+
+    if (filtered.sales?.labels) {
+        const indices = filtered.sales.labels.reduce((acc, label, index) => {
+            const date = parseLocalDate(label);
+            if (date >= startDate && date <= endDate) acc.push(index);
+            return acc;
+        }, []);
+        filtered.sales.labels = indices.map(index => data.sales.labels[index]);
+        filtered.sales.data = indices.map(index => data.sales.data[index]);
+    }
+
+    if (filtered.activity?.labels) {
+        const indices = filtered.activity.labels.reduce((acc, label, index) => {
+            const date = parseLocalDate(label);
+            if (date >= startDate && date <= endDate) acc.push(index);
+            return acc;
+        }, []);
+        filtered.activity.labels = indices.map(index => data.activity.labels[index]);
+        filtered.activity.activeUsers = indices.map(index => data.activity.activeUsers[index]);
+        filtered.activity.newUsers = indices.map(index => data.activity.newUsers[index]);
+    }
+
+    filtered.orders = filtered.sales?.data?.length || 0;
+    filtered.revenue = filtered.sales?.data?.reduce((sum, value) => sum + value, 0) || 0;
+    filtered.reviews = cloneData(defaultReviews);
+    filtered.notifications = defaultNotifications;
+
+    return filtered;
+}
+
+function populateDashboard(data) {
+    renderSalesChart(data);
+    renderInventoryChart(data);
+    renderActivityChart(data);
+    renderCustomerChart(data);
+    renderStats(data);
+    renderReviews(data.reviews);
+}
+
+function renderSalesChart(data) {
+    const container = document.getElementById("salesChartContainer");
+    if (!data.sales?.labels?.length) {
+        clearChart("salesChart");
+        container.innerHTML = emptyState("fa-chart-line", "No sales data available for the selected filters");
+        return;
+    }
+
+    renderOrUpdateChart("salesChart", {
+        type: "line",
+        data: {
+            labels: data.sales.labels.map(formatShortDate),
+            datasets: [{
+                label: "Sales ($)",
+                data: data.sales.data,
+                backgroundColor: "rgba(76, 141, 246, 0.12)",
+                borderColor: "#4c8df6",
+                pointBorderColor: "#4c8df6",
+                fill: true
+            }]
+        },
+        options: chartOptions()
     });
+}
 
-    function renderOrUpdateChart(id, config) {
-        const container = document.getElementById(id)?.parentElement;
-        if (!container) return;
-
-        if (chartInstances[id]) {
-            chartInstances[id].destroy();
-        }
-
-        container.innerHTML = `<canvas id="${id}" role="img" aria-label="${config.data.datasets[0].label} chart"></canvas>`;
-        const ctx = document.getElementById(id).getContext('2d');
-        chartInstances[id] = new Chart(ctx, config);
+function renderInventoryChart(data) {
+    const container = document.getElementById("inventoryChartContainer");
+    if (!data.inventory?.labels?.length) {
+        clearChart("inventoryChart");
+        container.innerHTML = emptyState("fa-boxes-stacked", "No inventory data available for the selected filters");
+        return;
     }
 
-    function populateDashboard(data) {
-        // Sales Chart
-        if (data.sales && data.sales.labels && data.sales.labels.length > 0) {
-            ensureCanvas('salesChartContainer', 'salesChart');
-            renderOrUpdateChart('salesChart', {
-                type: 'line',
-                data: {
-                    labels: data.sales.labels.map(formatShortDate),
-                    datasets: [{
-                        label: 'Sales ($)',
-                        data: data.sales.data,
-                        backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                        borderColor: 'lightgray',
-                        fill: true
-                    }]
-                },
-                options: chartOptions()
-            });
-        } else {
-            document.getElementById('salesChartContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-chart-line"></i>
-                    <p>No sales data available for the selected filters</p>
-                </div>`;
-        }
+    renderOrUpdateChart("inventoryChart", {
+        type: "bar",
+        data: {
+            labels: data.inventory.labels,
+            datasets: [{
+                label: "Stock Levels",
+                data: data.inventory.data,
+                backgroundColor: ["#4c8df6", "#41b883", "#f5b84b", "#ef5b5b"].slice(0, data.inventory.labels.length),
+                borderColor: "rgba(255, 255, 255, 0.28)",
+                borderWidth: 1
+            }]
+        },
+        options: chartOptions()
+    });
+}
 
-        // Inventory Chart
-        if (data.inventory && data.inventory.labels && data.inventory.labels.length > 0) {
-            ensureCanvas('inventoryChartContainer', 'inventoryChart');
-            renderOrUpdateChart('inventoryChart', {
-                type: 'bar',
-                data: {
-                    labels: data.inventory.labels,
-                    datasets: [{
-                        label: 'Stock Levels',
-                        data: data.inventory.data,
-                        backgroundColor: [
-                            'rgba(66, 153, 225, 0.7)', 'rgba(72, 187, 120, 0.7)',
-                            'rgba(246, 173, 85, 0.7)', 'rgba(245, 101, 101, 0.7)'
-                        ].slice(0, data.inventory.labels.length),
-                        borderColor: 'lightgray', // Adicionado para borda igual aos outros charts
-                        borderWidth: 2           // Opcional: deixa a borda mais visível
-                    }]
-                },
-                options: chartOptions()
-            });
-        } else {
-            document.getElementById('inventoryChartContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-boxes"></i>
-                    <p>No inventory data available for the selected filters</p>
-                </div>`;
-        }
-
-        // Customer Activity Chart
-        if (data.activity && data.activity.labels && data.activity.labels.length > 0) {
-            ensureCanvas('activityChartContainer', 'activityChart');
-            renderOrUpdateChart('activityChart', {
-                type: 'line',
-                data: {
-                    labels: data.activity.labels.map(formatShortDate),
-                    datasets: [
-                        {
-                            label: 'Active Users',
-                            data: data.activity.activeUsers,
-                            borderColor: 'lightgray',
-                            backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                            fill: true
-                        },
-                        {
-                            label: 'New Users',
-                            data: data.activity.newUsers,
-                            borderColor: 'lightgray',
-                            backgroundColor: 'rgba(72, 187, 120, 0.1)',
-                            fill: true
-                        }
-                    ]
-                },
-                options: chartOptions()
-            });
-        } else {
-            document.getElementById('activityChartContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-users"></i>
-                    <p>No activity data available for the selected filters</p>
-                </div>`;
-        }
-
-        // Customer Demographics Chart
-        if (data.customers && data.customers.labels && data.customers.labels.length > 0) {
-            ensureCanvas('customerChartContainer', 'customerChart');
-            renderOrUpdateChart('customerChart', {
-                type: 'doughnut',
-                data: {
-                    labels: data.customers.labels,
-                    datasets: [{
-                        label: 'Age Group',
-                        data: data.customers.data,
-                        backgroundColor: [
-                            'rgba(66, 153, 225, 0.7)', 'rgba(72, 187, 120, 0.7)',
-                            'rgba(246, 173, 85, 0.7)', 'rgba(245, 101, 101, 0.7)'
-                        ],
-                        borderColor: 'lightgray',
-                        borderWidth: 2
-                    }]
-                },
-                options: chartOptions(true)
-            });
-        } else {
-            document.getElementById('customerChartContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-user-friends"></i>
-                    <p>No demographic data available for the selected filters</p>
-                </div>`;
-        }
-
-        // Update metrics
-        document.getElementById('revenueValue').textContent = data.revenue ? `$${data.revenue.toLocaleString()}` : '$0';
-        document.getElementById('ordersValue').textContent = data.orders || '0';
-
-        // Reviews section (sempre usa padrão)
-        const reviewsContainer = document.getElementById('reviewsContainer');
-        if (defaultReviews && defaultReviews.length > 0) {
-            reviewsContainer.innerHTML = defaultReviews.map(review => `
-                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <span style="font-weight:600; color: var(--white)">${review.author}</span>
-                        <span style="color:var(--warning);">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
-                    </div>
-                    <p style="font-size:14px; opacity: 0.8; color: var(--light-gray)">"${review.text}"</p>
-                    <div style="font-size:12px; color: var(--light-gray); margin-top:5px;">${formatDate(review.date)}</div>
-                </div>
-            `).join('');
-            if (reviewsContainer.lastElementChild) {
-                reviewsContainer.lastElementChild.style.borderBottom = 'none';
-            }
-        } else {
-            reviewsContainer.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-comment-alt-slash"></i>
-                    <p>No reviews available for the selected filters</p>
-                </div>`;
-        }
+function renderActivityChart(data) {
+    const container = document.getElementById("activityChartContainer");
+    if (!data.activity?.labels?.length) {
+        clearChart("activityChart");
+        container.innerHTML = emptyState("fa-users", "No activity data available for the selected filters");
+        return;
     }
 
-    // Notificações (sempre usa padrão)
-    function updateNotificationBadge() {
-        const badge = document.getElementById('notificationBadge');
-        const notifications = defaultNotifications || [];
-        const unreadCount = notifications.filter(n => !n.read).length;
-        if (unreadCount > 0) {
-            badge.textContent = unreadCount;
-            badge.classList.add('active');
-        } else {
-            badge.textContent = '';
-            badge.classList.remove('active');
-        }
+    renderOrUpdateChart("activityChart", {
+        type: "line",
+        data: {
+            labels: data.activity.labels.map(formatShortDate),
+            datasets: [
+                {
+                    label: "Active Users",
+                    data: data.activity.activeUsers,
+                    borderColor: "#4c8df6",
+                    pointBorderColor: "#4c8df6",
+                    backgroundColor: "rgba(76, 141, 246, 0.12)",
+                    fill: true
+                },
+                {
+                    label: "New Users",
+                    data: data.activity.newUsers,
+                    borderColor: "#41b883",
+                    pointBorderColor: "#41b883",
+                    backgroundColor: "rgba(65, 184, 131, 0.12)",
+                    fill: true
+                }
+            ]
+        },
+        options: chartOptions()
+    });
+}
+
+function renderCustomerChart(data) {
+    const container = document.getElementById("customerChartContainer");
+    if (!data.customers?.labels?.length) {
+        clearChart("customerChart");
+        container.innerHTML = emptyState("fa-user-group", "No demographic data available for the selected filters");
+        return;
     }
 
-    function populateNotifications() {
-        updateNotificationBadge();
-        const list = document.getElementById('notificationList');
-        // Mostra apenas as não lidas
-        const notifications = (defaultNotifications || []).filter(n => !n.read);
-        if (notifications.length === 0) {
-            list.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications to display</p></div>`;
-        } else {
-            list.innerHTML = notifications.map(item => `
-                <div class="notification-item ${item.type}" data-id="${item.id}">
-                    <div class="notification-read"></div>
-                    <p>${item.message}</p>
-                    <div class="notification-time">${formatDate(item.date)}</div>
-                </div>
-            `).join('');
-        }
+    renderOrUpdateChart("customerChart", {
+        type: "doughnut",
+        data: {
+            labels: data.customers.labels,
+            datasets: [{
+                label: "Age Group",
+                data: data.customers.data,
+                backgroundColor: ["#4c8df6", "#41b883", "#f5b84b", "#ef5b5b"],
+                borderColor: "#20242c",
+                borderWidth: 3
+            }]
+        },
+        options: chartOptions(true)
+    });
+}
+
+function renderStats(data) {
+    document.getElementById("revenueValue").textContent = data.revenue ? `$${data.revenue.toLocaleString("en-US")}` : "$0";
+    document.getElementById("ordersValue").textContent = String(data.orders || 0);
+}
+
+function renderReviews(reviews) {
+    const container = document.getElementById("reviewsList");
+    if (!reviews?.length) {
+        container.innerHTML = emptyState("fa-comment-slash", "No reviews available for the selected filters");
+        return;
     }
 
-    // Filtro robusto: sempre filtra a partir do mockData original
-    function applyFilters() {
-        const startDate = document.getElementById('startDate')?.value ? new Date(document.getElementById('startDate').value) : null;
-        const endDate = document.getElementById('endDate')?.value ? new Date(document.getElementById('endDate').value) : null;
-        const category = document.getElementById('categoryFilter')?.value || 'all';
+    container.innerHTML = reviews.map(review => `
+        <div class="review-item">
+            <div class="review-meta">
+                <span class="review-author">${review.author}</span>
+                <span class="review-rating" aria-label="${review.rating} out of 5 stars">${renderRating(review.rating)}</span>
+            </div>
+            <p class="review-text">"${review.text}"</p>
+            <span class="review-date">${formatDate(review.date)}</span>
+        </div>
+    `).join("");
+}
 
-        // Sempre filtrar a partir do mockData original
-        const baseData = JSON.parse(JSON.stringify(mockData[category]));
-        const filtered = filterDataByDateRange(baseData, startDate, endDate);
+function renderRating(rating) {
+    return Array.from({ length: 5 }, (_, index) => {
+        const icon = index < rating ? "fas fa-star" : "far fa-star";
+        return `<i class="${icon}" aria-hidden="true"></i>`;
+    }).join("");
+}
 
-        currentData = filtered;
+function updateNotificationBadge() {
+    const badge = document.getElementById("notificationBadge");
+    const unreadCount = defaultNotifications.filter(notification => !notification.read).length;
+
+    badge.textContent = unreadCount ? String(unreadCount) : "";
+    badge.classList.toggle("active", unreadCount > 0);
+}
+
+function populateNotifications() {
+    const list = document.getElementById("notificationList");
+    const unreadNotifications = defaultNotifications.filter(notification => !notification.read);
+    updateNotificationBadge();
+
+    if (!unreadNotifications.length) {
+        list.innerHTML = emptyState("fa-bell-slash", "No notifications to display");
+        return;
+    }
+
+    list.innerHTML = unreadNotifications.map(item => `
+        <div class="notification-item ${item.type}" data-id="${item.id}">
+            <span class="notification-read" aria-hidden="true"></span>
+            <p>${item.message}</p>
+            <div class="notification-time">${formatDate(item.date)}</div>
+        </div>
+    `).join("");
+}
+
+function applyFilters() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const category = document.getElementById("categoryFilter")?.value || "all";
+        const startValue = document.getElementById("startDate")?.value;
+        const endValue = document.getElementById("endDate")?.value;
+        const startDate = parseLocalDate(startValue);
+        const endDate = parseLocalDate(endValue);
+
+        if (startDate && endDate && startDate > endDate) {
+            showNotificationToast("Start date cannot be after end date", "error");
+            return;
+        }
+
+        const baseData = withSharedContent(mockData[category] || mockData.all);
+        currentData = startDate && endDate ? filterDataByDateRange(baseData, startDate, endDate) : baseData;
         currentCategory = category;
 
         populateDashboard(currentData);
         populateNotifications();
+        showNotificationToast("Filters applied successfully", "success");
+    }, 160);
+}
+
+function createCustomSelect(containerId, options, defaultValue) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = "";
+
+    const selected = document.createElement("button");
+    selected.className = "custom-select-selected";
+    selected.type = "button";
+    selected.setAttribute("aria-haspopup", "listbox");
+    selected.setAttribute("aria-expanded", "false");
+
+    const list = document.createElement("div");
+    list.className = "custom-select-options";
+    list.setAttribute("role", "listbox");
+
+    const hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.id = "categoryFilter";
+    hidden.value = defaultValue;
+
+    function setValue(option) {
+        hidden.value = option.value;
+        selected.innerHTML = `<span>${option.label}</span><span class="custom-select-arrow"><i class="fas fa-chevron-down" aria-hidden="true"></i></span>`;
+        list.querySelectorAll(".custom-select-option").forEach(item => {
+            item.classList.toggle("selected", item.dataset.value === option.value);
+        });
     }
 
-    // Custom Select (Dropdown) - NÃO atualiza charts ao trocar categoria
-    function createCustomSelect(containerId, options, defaultValue) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        const selectedDiv = document.createElement('div');
-        selectedDiv.className = 'custom-select-selected';
-        selectedDiv.tabIndex = 0;
-        selectedDiv.setAttribute('role', 'button');
-        selectedDiv.setAttribute('aria-haspopup', 'listbox');
-        selectedDiv.setAttribute('aria-expanded', 'false');
-        selectedDiv.innerHTML = options.find(o => o.value === defaultValue).label + '<span class="custom-select-arrow">&#9662;</span>';
-        container.appendChild(selectedDiv);
-
-        const optionsDiv = document.createElement('div');
-        optionsDiv.className = 'custom-select-options';
-        optionsDiv.setAttribute('role', 'listbox');
-        options.forEach(opt => {
-            const optDiv = document.createElement('div');
-            optDiv.className = 'custom-select-option' + (opt.value === defaultValue ? ' selected' : '');
-            optDiv.setAttribute('role', 'option');
-            optDiv.setAttribute('data-value', opt.value);
-            optDiv.textContent = opt.label;
-            optDiv.addEventListener('click', () => {
-                selectedDiv.innerHTML = opt.label + '<span class="custom-select-arrow">&#9662;</span>';
-                optionsDiv.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
-                optDiv.classList.add('selected');
-                selectedDiv.setAttribute('aria-expanded', 'false');
-                optionsDiv.classList.remove('active');
-                document.getElementById('categoryFilter').value = opt.value;
-
-                // Remova o reset das datas ao trocar de categoria!
-                // resetDatePickersForCategory(opt.value); // <-- Removido
-
-                // NÃO chama applyFilters aqui!
-            });
-            optionsDiv.appendChild(optDiv);
+    options.forEach(option => {
+        const item = document.createElement("div");
+        item.className = "custom-select-option";
+        item.dataset.value = option.value;
+        item.textContent = option.label;
+        item.setAttribute("role", "option");
+        item.addEventListener("click", () => {
+            setValue(option);
+            selected.setAttribute("aria-expanded", "false");
+            list.classList.remove("active");
         });
-        container.appendChild(optionsDiv);
+        list.appendChild(item);
+    });
 
-        selectedDiv.addEventListener('click', () => {
-            const expanded = selectedDiv.getAttribute('aria-expanded') === 'true';
-            selectedDiv.setAttribute('aria-expanded', String(!expanded));
-            optionsDiv.classList.toggle('active');
-            const arrow = selectedDiv.querySelector('.custom-select-arrow');
-            arrow.style.transform = expanded ? 'rotate(0deg)' : 'rotate(180deg)';
-        });
+    selected.addEventListener("click", event => {
+        event.stopPropagation();
+        const expanded = selected.getAttribute("aria-expanded") === "true";
+        selected.setAttribute("aria-expanded", String(!expanded));
+        list.classList.toggle("active", !expanded);
+    });
 
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                selectedDiv.setAttribute('aria-expanded', 'false');
-                optionsDiv.classList.remove('active');
-                const arrow = selectedDiv.querySelector('.custom-select-arrow');
-                arrow.style.transform = 'rotate(0deg)';
-            }
-        });
-
-        // Hidden field para integração
-        let hidden = document.getElementById('categoryFilter');
-        if (!hidden) {
-            hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.id = 'categoryFilter';
-            hidden.value = defaultValue;
-            container.appendChild(hidden);
-        } else {
-            hidden.value = defaultValue;
+    document.addEventListener("click", event => {
+        if (!container.contains(event.target)) {
+            selected.setAttribute("aria-expanded", "false");
+            list.classList.remove("active");
         }
+    });
+
+    container.append(selected, list, hidden);
+    setValue(options.find(option => option.value === defaultValue) || options[0]);
+}
+
+function createCustomDatePicker(containerId, defaultDate, minDate, maxDate) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = "";
+
+    let selectedDate = parseLocalDate(defaultDate) || new Date();
+    let visibleMonth = selectedDate.getMonth();
+    let visibleYear = selectedDate.getFullYear();
+
+    const display = document.createElement("button");
+    display.type = "button";
+    display.className = "custom-date-display";
+    display.setAttribute("aria-haspopup", "dialog");
+    display.setAttribute("aria-expanded", "false");
+
+    const calendar = document.createElement("div");
+    calendar.className = "custom-date-calendar";
+
+    const hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.id = containerId === "customStartDate" ? "startDate" : "endDate";
+
+    function setSelectedDate(date) {
+        selectedDate = parseLocalDate(date);
+        hidden.value = toInputDate(selectedDate);
+        display.innerHTML = `<span>${hidden.value}</span><i class="fas fa-calendar-days" aria-hidden="true"></i>`;
     }
 
-    // Custom Date Picker
-    function createCustomDatePicker(containerId, defaultDate, minDate, maxDate) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        let selectedDate = defaultDate ? new Date(defaultDate) : new Date();
-        let currentMonth = selectedDate.getMonth();
-        let currentYear = selectedDate.getFullYear();
+    function isOutOfRange(date) {
+        return (minDate && date < minDate) || (maxDate && date > maxDate);
+    }
 
-        const displayDiv = document.createElement('div');
-        displayDiv.className = 'custom-date-display';
-        displayDiv.tabIndex = 0;
-        displayDiv.setAttribute('role', 'button');
-        displayDiv.setAttribute('aria-haspopup', 'dialog');
-        displayDiv.setAttribute('aria-expanded', 'false');
-        displayDiv.textContent = selectedDate.toISOString().slice(0,10);
+    function renderCalendar() {
+        calendar.innerHTML = "";
 
-        const calendarDiv = document.createElement('div');
-        calendarDiv.className = 'custom-date-calendar';
+        const header = document.createElement("div");
+        header.className = "calendar-header";
 
-        function renderCalendar() {
-            calendarDiv.innerHTML = '';
-            const header = document.createElement('div');
-            header.className = 'calendar-header';
-            const prev = document.createElement('span');
-            prev.className = 'calendar-nav';
-            prev.innerHTML = '&#9664;';
-            prev.addEventListener('click', (e) => {
-                e.stopPropagation(); // Impede o fechamento do modal ao clicar na seta
-                if (currentMonth === 0) {
-                    currentMonth = 11;
-                    currentYear--;
+        const previous = document.createElement("button");
+        previous.type = "button";
+        previous.className = "calendar-nav";
+        previous.innerHTML = `<i class="fas fa-chevron-left" aria-hidden="true"></i>`;
+
+        const title = document.createElement("span");
+        title.className = "calendar-title";
+        title.textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(new Date(visibleYear, visibleMonth, 1));
+
+        const next = document.createElement("button");
+        next.type = "button";
+        next.className = "calendar-nav";
+        next.innerHTML = `<i class="fas fa-chevron-right" aria-hidden="true"></i>`;
+
+        previous.addEventListener("click", event => {
+            event.stopPropagation();
+            visibleMonth = visibleMonth === 0 ? 11 : visibleMonth - 1;
+            if (visibleMonth === 11) visibleYear -= 1;
+            renderCalendar();
+        });
+
+        next.addEventListener("click", event => {
+            event.stopPropagation();
+            visibleMonth = visibleMonth === 11 ? 0 : visibleMonth + 1;
+            if (visibleMonth === 0) visibleYear += 1;
+            renderCalendar();
+        });
+
+        header.append(previous, title, next);
+        calendar.appendChild(header);
+
+        const table = document.createElement("table");
+        const headerRow = document.createElement("tr");
+        ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(day => {
+            const th = document.createElement("th");
+            th.textContent = day;
+            headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        const firstDay = new Date(visibleYear, visibleMonth, 1).getDay();
+        const daysInMonth = new Date(visibleYear, visibleMonth + 1, 0).getDate();
+        let day = 1;
+
+        for (let week = 0; week < 6; week += 1) {
+            const row = document.createElement("tr");
+            for (let index = 0; index < 7; index += 1) {
+                const cell = document.createElement("td");
+                if ((week === 0 && index < firstDay) || day > daysInMonth) {
+                    cell.textContent = "";
                 } else {
-                    currentMonth--;
-                }
-                renderCalendar();
-            });
-            const next = document.createElement('span');
-            next.className = 'calendar-nav';
-            next.innerHTML = '&#9654;';
-            next.addEventListener('click', (e) => {
-                e.stopPropagation(); // Impede o fechamento do modal ao clicar na seta
-                if (currentMonth === 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                } else {
-                    currentMonth++;
-                }
-                renderCalendar();
-            });
-            const monthYear = document.createElement('span');
-            monthYear.className = 'calendar-title';
-            monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
-            header.appendChild(prev);
-            header.appendChild(monthYear);
-            header.appendChild(next);
-            calendarDiv.appendChild(header);
+                    const date = new Date(visibleYear, visibleMonth, day);
+                    cell.textContent = String(day);
 
-            const table = document.createElement('table');
-            const daysRow = document.createElement('tr');
-            ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
-                const th = document.createElement('th');
-                th.textContent = d;
-                daysRow.appendChild(th);
-            });
-            table.appendChild(daysRow);
+                    if (toInputDate(date) === toInputDate(selectedDate)) {
+                        cell.classList.add("selected");
+                    }
 
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const daysInMonth = new Date(currentYear, currentMonth+1, 0).getDate();
-            let date = 1;
-            for (let i=0; i<6; i++) {
-                const row = document.createElement('tr');
-                for (let j=0; j<7; j++) {
-                    const cell = document.createElement('td');
-                    if (i === 0 && j < firstDay) {
-                        cell.textContent = '';
-                    } else if (date > daysInMonth) {
-                        cell.textContent = '';
+                    if (isOutOfRange(date)) {
+                        cell.classList.add("disabled");
                     } else {
-                        cell.textContent = date;
-                        const thisDate = new Date(currentYear, currentMonth, date);
-                        cell.className = '';
-                        if (
-                            selectedDate.getFullYear() === thisDate.getFullYear() &&
-                            selectedDate.getMonth() === thisDate.getMonth() &&
-                            selectedDate.getDate() === thisDate.getDate()
-                        ) {
-                            cell.classList.add('selected');
-                        }
-                        if (
-                            (minDate && thisDate < minDate) ||
-                            (maxDate && thisDate > maxDate)
-                        ) {
-                            cell.style.opacity = 0.3;
-                            cell.style.pointerEvents = 'none';
-                        } else {
-                            cell.addEventListener('click', () => {
-                                selectedDate = new Date(thisDate);
-                                displayDiv.textContent = selectedDate.toISOString().slice(0,10);
-                                calendarDiv.classList.remove('active');
-                                displayDiv.setAttribute('aria-expanded', 'false');
-                                hidden.value = selectedDate.toISOString().slice(0,10);
-                            });
-                        }
-                        date++;
+                        cell.addEventListener("click", () => {
+                            setSelectedDate(date);
+                            calendar.classList.remove("active");
+                            display.setAttribute("aria-expanded", "false");
+                        });
                     }
-                    row.appendChild(cell);
+                    day += 1;
                 }
-                table.appendChild(row);
-                if (date > daysInMonth) break;
+                row.appendChild(cell);
             }
-            calendarDiv.appendChild(table);
+            table.appendChild(row);
+            if (day > daysInMonth) break;
         }
 
-        displayDiv.addEventListener('click', (e) => {
-            e.stopPropagation();
-            // Fecha todos os outros calendários antes de abrir este
-            document.querySelectorAll('.custom-date-calendar.active').forEach(cal => {
-                if (cal !== calendarDiv) {
-                    cal.classList.remove('active');
-                    cal.previousSibling?.setAttribute('aria-expanded', 'false');
-                }
-            });
-            calendarDiv.classList.toggle('active');
-            displayDiv.setAttribute('aria-expanded', calendarDiv.classList.contains('active'));
-            if (calendarDiv.classList.contains('active')) {
-                renderCalendar();
-            }
-        });
-
-        // Corrige: não fecha o calendário ao clicar nas setas ou dentro do calendário
-        calendarDiv.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                calendarDiv.classList.remove('active');
-                displayDiv.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Hidden field para integração
-        let hidden = container.querySelector('input[type=hidden]');
-        if (!hidden) {
-            hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.value = selectedDate.toISOString().slice(0,10);
-            hidden.id = containerId === 'customStartDate' ? 'startDate' : 'endDate';
-            container.appendChild(hidden);
-        } else {
-            hidden.value = selectedDate.toISOString().slice(0,10);
-        }
-
-        container.appendChild(displayDiv);
-        container.appendChild(calendarDiv);
+        calendar.appendChild(table);
     }
 
-    // Eventos
-    function setupEventListeners() {
-        // Apply filters button
-        const applyBtn = document.getElementById('applyFilters');
-        if (applyBtn) {
-            applyBtn.addEventListener('click', applyFilters);
+    display.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll(".custom-date-calendar.active").forEach(openCalendar => {
+            if (openCalendar !== calendar) openCalendar.classList.remove("active");
+        });
+        const isActive = calendar.classList.toggle("active");
+        display.setAttribute("aria-expanded", String(isActive));
+        if (isActive) renderCalendar();
+    });
+
+    calendar.addEventListener("click", event => event.stopPropagation());
+
+    document.addEventListener("click", event => {
+        if (!container.contains(event.target)) {
+            calendar.classList.remove("active");
+            display.setAttribute("aria-expanded", "false");
         }
+    });
 
-        // Mark notification as read when clicked
-        const notificationList = document.getElementById('notificationList');
-        if (notificationList) {
-            notificationList.addEventListener('click', function(e) {
-                const item = e.target.closest('.notification-item');
-                if (item && item.dataset.id) {
-                    const notifId = parseInt(item.dataset.id, 10);
-                    const notif = (defaultNotifications || []).find(n => n.id === notifId);
-                    if (notif && !notif.read) {
-                        notif.read = true;
-                        populateNotifications();
-                    }
-                }
-            });
-        }
+    setSelectedDate(selectedDate);
+    container.append(display, calendar, hidden);
+}
 
-        // Close notifications panel
-        const closeBtn = document.getElementById('closeNotifications');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                document.getElementById('notificationPanel').classList.remove('active');
-                document.getElementById('notificationOverlay').classList.remove('active');
-            });
-        }
+function resetDatePickersForCategory(category) {
+    const [minDate, maxDate] = getCategoryDateRange(category);
+    if (!minDate || !maxDate) return;
+    createCustomDatePicker("customStartDate", minDate, minDate, maxDate);
+    createCustomDatePicker("customEndDate", maxDate, minDate, maxDate);
+}
 
-        // Open notifications panel
-        const bell = document.getElementById('notificationBell');
-        if (bell) {
-            bell.addEventListener('click', () => {
-                const panel = document.getElementById('notificationPanel');
-                const overlay = document.getElementById('notificationOverlay');
-                const isActive = panel.classList.toggle('active');
-                overlay.classList.toggle('active', isActive);
-                if (isActive) {
-                    populateNotifications();
-                }
-            });
-        }
+function setNotificationPanel(open) {
+    const panel = document.getElementById("notificationPanel");
+    const overlay = document.getElementById("notificationOverlay");
 
-        // Close overlay when clicking outside
-        const overlay = document.getElementById('notificationOverlay');
-        if (overlay) {
-            overlay.addEventListener('click', () => {
-                document.getElementById('notificationOverlay').classList.remove('active');
-            });
-        }
-    }
+    panel.classList.toggle("active", open);
+    overlay.classList.toggle("active", open);
+    panel.setAttribute("aria-hidden", String(!open));
+    document.body.classList.toggle("panel-open", open);
 
-    // Inicialização
-    function initDashboard() {
-        // Ao iniciar, sempre mostra o range total da categoria padrão
-        resetDatePickersForCategory('all');
+    if (open) populateNotifications();
+}
 
-        createCustomSelect('customCategory', [
-            { value: 'all', label: 'All' },
-            { value: 'electronics', label: 'Electronics' },
-            { value: 'clothing', label: 'Clothing' }
-        ], 'all');
+function markNotificationAsRead(id) {
+    const notification = defaultNotifications.find(item => item.id === id);
+    if (!notification) return;
+    notification.read = true;
+    populateNotifications();
+}
 
-        populateDashboard(currentData);
-        populateNotifications();
-        setupEventListeners();
-    }
+function showNotificationToast(message, type = "success") {
+    document.querySelector(".toast-notification")?.remove();
 
-    document.addEventListener('DOMContentLoaded', initDashboard);
-</script>
+    const toast = document.createElement("div");
+    const icon = type === "error" ? "fa-circle-exclamation" : "fa-circle-check";
+    toast.className = `toast-notification ${type}`;
+    toast.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>${message}</span>`;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add("visible"));
+    setTimeout(() => {
+        toast.classList.remove("visible");
+        setTimeout(() => toast.remove(), 220);
+    }, 2400);
+}
+
+function setupEventListeners() {
+    document.getElementById("applyFilters").addEventListener("click", applyFilters);
+    document.getElementById("notificationBell").addEventListener("click", () => setNotificationPanel(true));
+    document.getElementById("closeNotifications").addEventListener("click", () => setNotificationPanel(false));
+    document.getElementById("notificationOverlay").addEventListener("click", () => setNotificationPanel(false));
+
+    document.getElementById("notificationList").addEventListener("click", event => {
+        const item = event.target.closest(".notification-item");
+        if (item?.dataset.id) markNotificationAsRead(Number(item.dataset.id));
+    });
+
+    document.getElementById("reviewsToggle").addEventListener("click", event => {
+        const button = event.currentTarget;
+        const content = document.getElementById("reviewsExtra");
+        const isVisible = content.classList.toggle("visible");
+        button.setAttribute("aria-expanded", String(isVisible));
+        button.querySelector("span").textContent = isVisible ? "Show Less" : "Learn More";
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") setNotificationPanel(false);
+    });
+}
+
+function initDashboard() {
+    resetDatePickersForCategory("all");
+    createCustomSelect("customCategory", [
+        { value: "all", label: "All" },
+        { value: "electronics", label: "Electronics" },
+        { value: "clothing", label: "Clothing" }
+    ], "all");
+
+    populateDashboard(currentData);
+    populateNotifications();
+    setupEventListeners();
+}
+
+document.addEventListener("DOMContentLoaded", initDashboard);
