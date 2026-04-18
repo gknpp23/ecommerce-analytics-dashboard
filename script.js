@@ -67,6 +67,7 @@ const chartInstances = {};
 let currentCategory = "all";
 let currentData = withSharedContent(mockData.all);
 let debounceTimer;
+let resizeTimer;
 
 function cloneData(data) {
     return cloneJson(data);
@@ -122,19 +123,42 @@ function getCategoryDateRange(category) {
     return [new Date(Math.min(...dates)), new Date(Math.max(...dates))];
 }
 
+function getChartViewport() {
+    const width = window.innerWidth || document.documentElement.clientWidth;
+    return {
+        compact: width <= 560,
+        narrow: width <= 820
+    };
+}
+
 function chartOptions(isDonut = false) {
+    const viewport = getChartViewport();
+    const legendPosition = isDonut && viewport.narrow ? "bottom" : isDonut ? "right" : "top";
+    const legendVisible = true;
+    const labelSize = viewport.compact ? 10 : viewport.narrow ? 11 : 12;
+    const axisSize = viewport.compact ? 9 : viewport.narrow ? 10 : 11;
+    const pointRadius = viewport.compact ? 2 : viewport.narrow ? 3 : 4;
+    const tickLimit = viewport.compact ? 4 : viewport.narrow ? 5 : 7;
+
     return {
         responsive: true,
         maintainAspectRatio: false,
+        resizeDelay: 120,
         animation: { duration: 700, easing: "easeOutQuart" },
+        layout: {
+            padding: viewport.compact ? 0 : 2
+        },
+        cutout: isDonut ? viewport.compact ? "62%" : "58%" : undefined,
         plugins: {
             legend: {
-                display: true,
-                position: isDonut ? "right" : "top",
+                display: legendVisible,
+                position: legendPosition,
                 labels: {
                     color: "#aeb7c4",
-                    font: { family: "Quicksand", weight: "700", size: 12 },
-                    padding: 18,
+                    boxHeight: viewport.compact ? 6 : 8,
+                    boxWidth: viewport.compact ? 6 : 8,
+                    font: { family: "Quicksand", weight: "700", size: labelSize },
+                    padding: viewport.compact ? 6 : viewport.narrow ? 10 : 14,
                     usePointStyle: true,
                     pointStyle: "circle"
                 }
@@ -157,16 +181,29 @@ function chartOptions(isDonut = false) {
         scales: isDonut ? {} : {
             y: {
                 grid: { color: "rgba(255, 255, 255, 0.06)", drawBorder: false },
-                ticks: { color: "#aeb7c4", font: { family: "Quicksand", weight: "600" }, padding: 8 }
+                ticks: {
+                    color: "#aeb7c4",
+                    font: { family: "Quicksand", weight: "600", size: axisSize },
+                    maxTicksLimit: tickLimit,
+                    padding: viewport.compact ? 4 : 7
+                }
             },
             x: {
                 grid: { color: "rgba(255, 255, 255, 0.04)", drawBorder: false },
-                ticks: { color: "#aeb7c4", font: { family: "Quicksand", weight: "600" }, padding: 8 }
+                ticks: {
+                    autoSkip: true,
+                    color: "#aeb7c4",
+                    font: { family: "Quicksand", weight: "600", size: axisSize },
+                    maxRotation: 0,
+                    maxTicksLimit: tickLimit,
+                    minRotation: 0,
+                    padding: viewport.compact ? 4 : 7
+                }
             }
         },
         elements: {
-            line: { tension: 0.38, borderWidth: 2 },
-            point: { radius: 4, hoverRadius: 6, backgroundColor: "#f6f8fb", borderWidth: 2 },
+            line: { tension: 0.38, borderWidth: viewport.compact ? 1.5 : 2 },
+            point: { radius: pointRadius, hoverRadius: pointRadius + 2, backgroundColor: "#f6f8fb", borderWidth: viewport.compact ? 1 : 2 },
             bar: { borderRadius: 6, borderSkipped: false }
         }
     };
@@ -699,6 +736,13 @@ function setupEventListeners() {
 
     document.addEventListener("keydown", event => {
         if (event.key === "Escape") setNotificationPanel(false);
+    });
+
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            populateDashboard(currentData);
+        }, 180);
     });
 }
 
